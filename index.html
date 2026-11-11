@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BIOS-109 Exam Lab</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;700&family=Inter:wght@400;500;600&family=Cairo:wght@500;700&family=Amiri:wght@400;700&family=Quicksand:wght@500;600;700&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+<script>
+  if (window.tailwind) tailwind.config = { theme: { extend: { fontFamily: {
+    display: ['"Space Grotesk"', 'sans-serif'], mono: ['"JetBrains Mono"', 'monospace'],
+    sans: ['Inter', 'system-ui', 'sans-serif'], ar: ['Cairo', 'sans-serif'] } } } };
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<style>
+  /* ===== THEMES: default (lab) · boy · girl — switched live via <body data-theme> ===== */
+  body {   /* default (no gender chosen): neutral gray */
+    --bg:#1e1f22; --panel:#26272b; --panel2:#2d2e33; --line:#3d3e44; --text:#ececee; --muted:#9a9ba1;
+    --acc:#c9cace; --accInk:#1e1f22; --amber:#a8a9ae; --amberInk:#1e1f22; --rose:#d98a8a; --violet:#8e8f95;
+    --accSoft:rgba(255,255,255,.06); --accLine:rgba(255,255,255,.25); --ring:rgba(255,255,255,.15);
+    --okBg:rgba(127,191,152,.10); --okLine:#7fbf98; --okText:#a7d7b8; --badBg:rgba(217,138,138,.09); --badLine:rgba(217,138,138,.6); --badText:#e5a9a9;
+    --soft:#c9cace; --inputBg:#1a1b1e; --ph:#6b6c72; --header:rgba(30,31,34,.86); --overlay:rgba(0,0,0,.6);
+    --dis:#3d3e44; --disInk:#77787e; --grid:rgba(255,255,255,.03); --glow1:rgba(255,255,255,.05); --glow2:rgba(255,255,255,.035);
+    --remBg:linear-gradient(90deg,rgba(255,255,255,.07),rgba(255,255,255,.03)); --bankTag:#c4c5ca; --lecTag:#a9aab0; --r:18px;
+    --cA:#ececee; --c1:#d4d4d8; --c2:#bdbdc2; --c4:#a6a7ad; --c5:#c7c7cc; --c6:#b0b1b6; --c7:#9d9ea4;
+  }
+  body[data-theme="boy"] {
+    --bg:#060a13; --panel:#0c1322; --panel2:#101a2e; --line:#1d2a45; --text:#e6edf7; --muted:#7f8daa;
+    --acc:#3b82f6; --accInk:#ffffff; --amber:#f59e0b; --amberInk:#1f1300; --rose:#ef4444; --violet:#22d3ee;
+    --accSoft:rgba(59,130,246,.10); --accLine:rgba(59,130,246,.45); --ring:rgba(59,130,246,.25);
+    --inputBg:#0a1120; --ph:#56627e; --header:rgba(6,10,19,.85); --dis:#1d2a45; --disInk:#56627e;
+    --grid:rgba(96,165,250,.05); --glow1:rgba(59,130,246,.16); --glow2:rgba(34,211,238,.10);
+    --remBg:linear-gradient(90deg,rgba(59,130,246,.14),rgba(34,211,238,.10)); --bankTag:#93c5fd; --lecTag:#67e8f9; --r:12px;
+    --cA:#e6edf7; --c1:#ef4444; --c2:#f59e0b; --c4:#22d3ee; --c5:#22c55e; --c6:#3b82f6; --c7:#8b5cf6;
+  }
+  body[data-theme="girl"] {
+    --bg:#fbf5f8; --panel:#ffffff; --panel2:#fdf1f6; --line:#efd9e3; --text:#4b2f3e; --muted:#9a7b8b;
+    --acc:#d47fa6; --accInk:#ffffff; --amber:#e3a0b2; --amberInk:#ffffff; --rose:#d16d7e; --violet:#b69ad8;
+    --accSoft:rgba(212,127,166,.10); --accLine:rgba(212,127,166,.45); --ring:rgba(212,127,166,.20);
+    --okBg:rgba(124,184,150,.14); --okLine:#8cc5a4; --okText:#3f8a63; --badBg:rgba(209,109,126,.08); --badLine:#e2a1ad; --badText:#b5546a;
+    --soft:#6b5160; --inputBg:#ffffff; --ph:#c9b0bd; --header:rgba(251,245,248,.86); --overlay:rgba(75,47,62,.35);
+    --dis:#f1e4ea; --disInk:#c0a6b3; --grid:rgba(212,127,166,.07); --glow1:rgba(232,160,191,.30); --glow2:rgba(182,154,216,.28);
+    --remBg:linear-gradient(90deg,rgba(232,160,191,.22),rgba(182,154,216,.22)); --bankTag:#8f80cf; --lecTag:#c4669a; --r:24px;
+    --cA:#8f6f80; --c1:#d16d7e; --c2:#e39bb6; --c4:#b69ad8; --c5:#c98bb9; --c6:#9d8fd6; --c7:#e2a08f;
+  }
+  body[data-theme="girl"] .font-display, body[data-theme="girl"] .tile .sym, body[data-theme="girl"] .btn { font-family: 'Quicksand', sans-serif; }
+  body[data-theme="boy"] .font-display, body[data-theme="boy"] .tile .sym, body[data-theme="boy"] .btn { font-family: 'Rajdhani', sans-serif; letter-spacing: .02em; }
+  body[data-theme="girl"] .panel, body[data-theme="girl"] .panel2 { box-shadow: 0 8px 30px -14px rgba(196,102,154,.25); }
+  body { transition: background-color .5s ease, color .5s ease; }
+  .panel, .panel2, .tile, .chip, .opt, input, textarea, header { transition: background-color .5s ease, border-color .5s ease, color .5s ease; }
+  /* decorations */
+  #decor { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  #decor span { position: absolute; animation: drift linear infinite; user-select: none; }
+  /* ===== Islamic / spiritual look for the du'a screen ===== */
+  body.islamic {
+    background-image:
+      radial-gradient(700px 420px at 50% 18%, rgba(200,164,92,.22), transparent 65%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='84' viewBox='0 0 84 84'%3E%3Cg fill='none' stroke='%23c8a45c' stroke-opacity='.22' stroke-width='1.1'%3E%3Crect x='24' y='24' width='36' height='36'/%3E%3Crect x='24' y='24' width='36' height='36' transform='rotate(45 42 42)'/%3E%3Ccircle cx='42' cy='42' r='7'/%3E%3Cpath d='M0 42h12M72 42h12M42 0v12M42 72v12'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: auto, 84px 84px;
+  }
+  .mihrab { position: relative; text-align: center; padding: 64px 26px 34px; background: var(--panel);
+            border: 2px solid rgba(200,164,92,.65); border-radius: 260px 260px 26px 26px / 170px 170px 26px 26px;
+            box-shadow: 0 0 0 7px rgba(200,164,92,.10), 0 30px 80px -30px rgba(200,164,92,.45); }
+  .mihrab::before { content: ''; position: absolute; inset: 10px; border: 1px solid rgba(200,164,92,.35);
+            border-radius: 250px 250px 18px 18px / 162px 162px 18px 18px; pointer-events: none; }
+  .quran { font-family: 'Amiri', 'Cairo', serif; direction: rtl; font-size: clamp(22px, 4.6vw, 31px); line-height: 2.25; color: var(--text); }
+  .ayah-n { display: inline-grid; place-items: center; width: 1.55em; height: 1.55em; margin: 0 .25em; font-size: .62em; vertical-align: middle;
+            border: 1.5px solid #c8a45c; border-radius: 50%; color: #c8a45c; font-family: 'Amiri', serif; line-height: 1; }
+  .dua-text { font-family: 'Amiri', 'Cairo', serif; direction: rtl; font-size: clamp(20px, 4vw, 27px); line-height: 2.1; }
+  .gold { color: #c8a45c; }
+  .orn { color: #c8a45c; font-size: 26px; letter-spacing: 14px; opacity: .9; }
+  .bism-btn { font-family: 'Amiri', 'Cairo', serif; font-size: 24px; font-weight: 700; padding: 12px 34px; border-radius: 999px;
+              background: linear-gradient(135deg, #d9b86c, #b98f3e); color: #2a1d05; box-shadow: 0 12px 30px -10px rgba(200,164,92,.7); transition: transform .15s; }
+  .bism-btn:hover { transform: translateY(-2px) scale(1.02); }
+  @keyframes drift { 0% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-26px) rotate(12deg); } 100% { transform: translateY(0) rotate(0deg); } }
+  .gchip { border: 1.5px solid var(--line); border-radius: 999px; padding: 9px 18px; background: var(--panel2); font-weight: 600; transition: all .2s; }
+  .gchip:hover { border-color: var(--acc); }
+  .gchip.on { background: var(--acc); color: var(--accInk); border-color: var(--acc); }
+  html, body { background: var(--bg); color: var(--text); }
+  body {
+    background-image:
+      radial-gradient(900px 500px at 85% -10%, var(--glow1), transparent 60%),
+      radial-gradient(700px 400px at -10% 110%, var(--glow2), transparent 60%),
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: auto, auto, 32px 32px, 32px 32px;
+    background-attachment: fixed;
+  }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); }
+  .panel2 { background: var(--panel2); border: 1px solid var(--line); border-radius: 14px; }
+  .muted { color: var(--muted); }
+  .ar { font-family: 'Cairo', sans-serif; direction: rtl; unicode-bidi: plaintext; }
+  .label { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+  input, textarea { background: var(--inputBg); border: 1px solid var(--line); color: var(--text); border-radius: 12px; }
+  input:focus, textarea:focus { outline: none; border-color: var(--acc); box-shadow: 0 0 0 3px var(--ring); }
+  input::placeholder, textarea::placeholder { color: var(--ph); }
+
+  /* element tiles */
+  .tile { position: relative; border: 1.5px solid var(--line); border-radius: 14px; padding: 10px 12px 12px; background: var(--panel2);
+          transition: transform .15s, border-color .15s, box-shadow .15s; text-align: left; cursor: pointer; min-height: 112px; }
+  .tile:hover { transform: translateY(-2px); }
+  .tile .num { font-family: 'JetBrains Mono', monospace; font-size: 12px; opacity: .8; }
+  .tile .cnt { position: absolute; top: 9px; right: 11px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+  .tile .sym { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 32px; line-height: 1.1; margin-top: 2px; }
+  .tile .nm { font-size: 12px; color: var(--muted); line-height: 1.25; margin-top: 2px; }
+  .tile.on { border-color: var(--c); box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 25%, transparent), inset 0 0 40px color-mix(in srgb, var(--c) 10%, transparent); }
+  .tile .sym { color: var(--c); }
+
+  .chip { font-family: 'JetBrains Mono', monospace; border: 1.5px solid var(--line); border-radius: 999px; padding: 8px 16px; font-size: 14px; background: var(--panel2); transition: all .15s; }
+  .chip:hover:not(:disabled) { border-color: var(--acc); }
+  .chip.on { background: var(--acc); color: var(--accInk); border-color: var(--acc); font-weight: 700; }
+  .chip:disabled { opacity: .35; cursor: not-allowed; }
+
+  .btn { font-family: 'Space Grotesk', sans-serif; font-weight: 600; border-radius: 12px; padding: 12px 22px; transition: all .15s; }
+  .btn-acc { background: var(--acc); color: var(--accInk); } .btn-acc:hover { filter: brightness(1.08); }
+  .btn-acc:disabled { background: var(--dis); color: var(--disInk); cursor: not-allowed; }
+  .btn-ghost { border: 1.5px solid var(--line); color: var(--text); } .btn-ghost:hover { border-color: var(--acc); }
+  .btn-amber { background: var(--amber); color: var(--amberInk); }
+
+  .opt { width: 100%; text-align: left; border: 1.5px solid var(--line); border-radius: 14px; padding: 12px 14px; display: flex; gap: 12px; align-items: flex-start; background: var(--panel2); transition: all .15s; }
+  .opt:hover:not(:disabled) { border-color: var(--acc); }
+  .opt .k { font-family: 'JetBrains Mono', monospace; width: 28px; height: 28px; flex-shrink: 0; display: grid; place-items: center; border-radius: 8px; background: var(--inputBg); border: 1px solid var(--line); font-size: 13px; }
+  .opt.sel { border-color: var(--acc); background: var(--accSoft); }
+  .opt.ok  { border-color: var(--okLine); background: var(--okBg); }
+  .opt.bad { border-color: var(--badLine); background: var(--badBg); }
+
+  .tag { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+  .fade { animation: fade .28s ease; } @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .hidden-view { display: none !important; }
+  #toast { transition: all .3s ease; }
+  .pop { animation: pop .4s ease; } @keyframes pop { 0% { transform: scale(.85); opacity: 0 } 60% { transform: scale(1.04) } 100% { transform: scale(1); opacity: 1 } }
+  .confetti { position: fixed; top: -40px; font-size: 26px; animation: fall linear forwards; pointer-events: none; z-index: 60; }
+  @keyframes fall { to { transform: translateY(110vh) rotate(540deg); opacity: .9; } }
+  table td, table th { border-color: var(--line); }
+</style>
+</head>
+<body class="font-sans min-h-screen">
+<div id="decor" aria-hidden="true"></div>
+
+<!-- ================= HEADER ================= -->
+<header class="sticky top-0 z-30 backdrop-blur border-b" style="background:var(--header);border-color:var(--line)">
+  <div class="max-w-5xl mx-auto px-4 h-16 flex items-center gap-3">
+    <div id="logo" class="select-none w-11 h-11 rounded-lg grid place-items-center relative" style="background:var(--panel2);border:1.5px solid var(--acc)">
+      <span class="absolute top-0.5 left-1 font-mono text-[9px]" style="color:var(--acc)">109</span>
+      <span class="font-display font-bold text-lg" style="color:var(--acc)">Bs</span>
+    </div>
+    <div>
+      <div class="font-display font-bold leading-tight">BIOS-109 Exam Lab</div>
+      <div class="text-xs muted leading-tight">Biostatistics</div>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-5xl mx-auto px-4 py-8 relative z-10">
+
+<!-- ================= SETUP (one screen) ================= -->
+<section id="view-setup" class="fade">
+  <div class="mb-6">
+    <div class="label mb-2">Formative MCQ practice</div>
+    <h1 class="font-display text-3xl sm:text-4xl font-bold" id="hello">Welcome to the lab 👋</h1>
+    <p class="muted mt-2 max-w-2xl">Questions come from the course question bank plus new questions built from lecture details. Instant feedback after every answer.</p>
+  </div>
+
+  <div class="panel p-5 sm:p-7 grid gap-7">
+    <!-- name -->
+    <div>
+      <label for="studentName" class="label block mb-2">Your name <span style="color:var(--acc)">(optional)</span></label>
+      <input id="studentName" type="text" maxlength="30" autocomplete="given-name" placeholder="Name" class="w-full sm:max-w-sm px-4 py-3 text-lg">
+      <p id="nameHint" class="ar text-sm mt-2 muted text-right sm:text-right">✍️ اختياري — لو كتبت اسمك هنناديك بيه في رسايل الترحيب والفيدباك بعد كل سؤال وفي النتيجة النهائية.</p>
+    </div>
+
+    <!-- gender -->
+    <div>
+      <div class="label mb-3">Gender <span style="color:var(--acc)">(optional)</span></div>
+      <div class="flex flex-wrap gap-2" id="genderChips">
+        <button type="button" class="gchip ar" data-gender="boy">👦 ولد</button>
+        <button type="button" class="gchip ar" data-gender="girl">👧 بنت</button>
+        <button type="button" class="gchip ar" data-gender="">⚗️ من غير اختيار</button>
+      </div>
+      <p class="ar text-sm mt-2 muted text-right sm:text-right">🎨 اختياري — لو اخترت، شكل الموقع وألوانه وطريقة الكلام والتحفيز هيتغيّروا ليك في نفس اللحظة. لو مخترتش، هيفضل الشكل الأساسي.</p>
+    </div>
+
+    <!-- mode -->
+    <div>
+      <div class="label mb-3">Mode</div>
+      <div class="grid sm:grid-cols-2 gap-3" id="modeChoices">
+        <button type="button" class="tile" style="--c:var(--acc);min-height:auto" data-mode="custom">
+          <div class="font-semibold">🧪 Custom practice</div>
+          <div class="nm mt-1">Choose the lecture, number of questions and difficulty</div>
+        </button>
+        <button type="button" class="tile" style="--c:var(--acc);min-height:auto" data-mode="sim">
+          <div class="font-semibold">🎓 Exam simulation</div>
+          <div class="nm mt-1">32 random MCQs, all from the question bank</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- scope -->
+    <div id="secScope">
+      <div class="label mb-3">Choose the lecture</div>
+      <div id="scopeTiles" class="grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
+    </div>
+
+    <!-- source -->
+    <div id="secSource">
+      <div class="label mb-3">Question source</div>
+      <div class="grid sm:grid-cols-2 gap-3" id="sourceChoices">
+        <button type="button" class="tile" style="--c:var(--acc);min-height:auto" data-source="mix">
+          <div class="font-semibold">📘 + 🧪 Bank + lecture questions</div>
+          <div class="nm mt-1">85–90% from the question bank, the rest new questions from lecture details</div>
+        </button>
+        <button type="button" class="tile" style="--c:var(--acc);min-height:auto" data-source="bank">
+          <div class="font-semibold">📘 Question bank only</div>
+          <div class="nm mt-1">Every question comes from the official bank</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- count -->
+    <div id="secCount">
+      <div class="label mb-3">Number of questions</div>
+      <div class="flex flex-wrap gap-2 items-center" id="countChips"></div>
+      <div class="flex items-center gap-3 mt-3">
+        <input id="customCount" type="number" inputmode="numeric" min="1" step="1" placeholder="Type a number" class="w-40 px-3 py-2">
+        <span class="text-sm muted" id="customMax"></span>
+      </div>
+      <p id="countErr" class="text-sm mt-2 hidden" style="color:var(--rose)"></p>
+    </div>
+
+    <!-- difficulty -->
+    <div id="secDiff">
+      <div class="label mb-3">Difficulty</div>
+      <div class="flex flex-wrap gap-2" id="diffChips"></div>
+      <p class="text-xs muted mt-2">If a level runs short for the chosen lecture, the exam is topped up from the nearest level.</p>
+    </div>
+
+    <div class="flex flex-wrap items-center justify-between gap-4 pt-5 border-t" style="border-color:var(--line)">
+      <div class="text-sm muted" id="summary"></div>
+      <button id="startBtn" class="btn btn-acc text-lg px-8">Start exam →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= DU'A BEFORE THE EXAM ================= -->
+<section id="view-dua" class="hidden-view">
+  <div class="max-w-2xl mx-auto pt-2 pb-6">
+    <div class="mihrab pop">
+      <div class="orn mb-2">۞ ✦ ۞</div>
+      <div class="ar gold font-bold text-lg mb-5">دعاء قبل الامتحان</div>
+
+      <div class="quran">﴿رَبِّ اشْرَحْ لِي صَدْرِي <span class="ayah-n">٢٥</span> وَيَسِّرْ لِي أَمْرِي <span class="ayah-n">٢٦</span> وَاحْلُلْ عُقْدَةً مِّن لِّسَانِي <span class="ayah-n">٢٧</span> يَفْقَهُوا قَوْلِي <span class="ayah-n">٢٨</span>﴾</div>
+      <div class="ar text-sm muted mt-1">[سورة طه: ٢٥–٢٨]</div>
+
+      <div class="orn my-6">✦ ۞ ✦</div>
+
+      <div class="dua-text">اللَّهُمَّ لَا سَهْلَ إِلَّا مَا جَعَلْتَهُ سَهْلًا، وَأَنْتَ تَجْعَلُ الْحَزْنَ إِذَا شِئْتَ سَهْلًا</div>
+      <div class="ar text-sm muted mt-1">رواه ابن حبان وابن السني عن أنس رضي الله عنه</div>
+
+      <div class="mt-9"><button id="bismillahBtn" class="bism-btn">بسم الله نبدأ؟</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= EXAM ================= -->
+<section id="view-exam" class="hidden-view">
+  <div class="max-w-3xl mx-auto">
+    <div class="grid grid-cols-4 gap-2 sm:gap-3 mb-3">
+      <div class="panel2 px-3 py-2"><div class="label">Question</div><div class="font-mono text-xl sm:text-2xl font-bold"><span id="qNum">1</span><span class="muted text-base">/<span id="qTotal">10</span></span></div></div>
+      <div class="panel2 px-3 py-2"><div class="label">Score</div><div class="font-mono text-xl sm:text-2xl font-bold" style="color:var(--acc)" id="liveScore">0</div></div>
+      <div class="panel2 px-3 py-2"><div class="label">Streak</div><div class="font-mono text-xl sm:text-2xl font-bold" style="color:var(--amber)"><span id="streak">0</span><span class="text-base"> 🔥</span></div></div>
+      <div class="panel2 px-3 py-2"><div class="label">Time</div><div class="font-mono text-xl sm:text-2xl font-bold" id="timer">00:00</div></div>
+    </div>
+    <div class="h-1.5 rounded-full overflow-hidden mb-4" style="background:var(--line)"><div id="progressBar" class="h-full transition-all duration-300" style="width:0%;background:linear-gradient(90deg,var(--acc),var(--violet))"></div></div>
+
+    <div id="reminder" class="hidden mb-4 rounded-2xl px-5 py-4 flex items-center justify-between gap-3 fade" style="background:var(--remBg);border:1px solid var(--accLine)">
+      <div class="ar text-lg font-bold flex-1 text-center" id="reminderText"></div>
+      <button id="reminderX" class="muted text-xl leading-none px-2" aria-label="Dismiss">×</button>
+    </div>
+
+    <div class="panel p-5 sm:p-7 fade" id="qCard">
+      <div class="flex flex-wrap gap-2 mb-4" id="qTags"></div>
+      <h2 id="qText" class="text-lg sm:text-xl font-semibold leading-relaxed mb-5"></h2>
+
+      <div id="qOptions" class="grid gap-3"></div>
+
+      <div id="essayBox" class="hidden">
+        <textarea id="essayInput" rows="4" class="w-full px-4 py-3" placeholder="Write your answer here (optional) — then reveal the model answer."></textarea>
+        <div id="modelBox" class="hidden mt-4 rounded-xl p-4" style="background:var(--accSoft);border:1px solid var(--accLine)">
+          <div class="label mb-2" style="color:var(--acc)">Model answer</div>
+          <ul id="modelList" class="grid gap-1 font-medium"></ul>
+        </div>
+        <div id="selfMark" class="hidden mt-4">
+          <div class="ar text-center font-bold mb-3" id="selfPrompt">قارن إجابتك بالإجابة النموذجية… الجواب صح؟</div>
+          <div class="grid grid-cols-2 gap-3">
+            <button id="markRight" class="btn ar" style="background:var(--okBg);border:1.5px solid var(--okLine);color:var(--okText)">✅ الجواب صح</button>
+            <button id="markWrong" class="btn ar" style="background:var(--badBg);border:1.5px solid var(--badLine);color:var(--badText)">مجبتهاش المرادي 😅</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="feedback" class="hidden mt-5 rounded-xl p-4 text-sm leading-relaxed"></div>
+
+      <div class="flex justify-end mt-6 gap-3">
+        <button id="revealBtn" class="hidden btn btn-ghost">Show model answer</button>
+        <button id="submitBtn" disabled class="btn btn-acc">Submit answer</button>
+        <button id="nextBtn" class="hidden btn btn-acc">Next →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= RESULT ================= -->
+<section id="view-result" class="hidden-view">
+  <div class="max-w-3xl mx-auto">
+    <div class="panel p-6 sm:p-10 text-center pop">
+      <div class="label" id="resLabel">Your score</div>
+      <div class="font-mono text-6xl sm:text-7xl font-bold mt-3" id="resPct">0%</div>
+      <div class="muted mt-1 font-mono" id="resScore"></div>
+      <div class="ar text-xl sm:text-2xl font-bold mt-5 leading-relaxed" id="resMsg"></div>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-8 text-left">
+        <div class="panel2 p-3"><div class="label">Lecture</div><div class="font-semibold text-sm mt-1" id="resScope"></div></div>
+        <div class="panel2 p-3"><div class="label">Difficulty</div><div class="font-semibold text-sm mt-1" id="resDiff"></div></div>
+        <div class="panel2 p-3"><div class="label">Time</div><div class="font-semibold text-sm mt-1 font-mono" id="resTime"></div></div>
+        <div class="panel2 p-3"><div class="label">Best streak</div><div class="font-semibold text-sm mt-1 font-mono" id="resStreak"></div></div>
+      </div>
+      <div class="flex flex-wrap gap-3 justify-center mt-8">
+        <button id="retryWrongBtn" class="hidden btn btn-amber"></button>
+        <button id="reviewToggle" class="btn btn-ghost">Review answers</button>
+        <button id="restartBtn" class="btn btn-acc">New exam</button>
+      </div>
+      <div class="ar text-sm muted mt-8">سبحانك اللهم وبحمدك، أشهد أن لا إله إلا أنت، أستغفرك وأتوب إليك 🤍</div>
+    </div>
+    <div id="reviewList" class="hidden mt-5 grid gap-3"></div>
+  </div>
+</section>
+
+<!-- ================= ADMIN ================= -->
+<section id="view-admin" class="hidden-view">
+  <div class="flex flex-wrap items-end justify-between gap-3 mb-6">
+    <div>
+      <div class="label mb-1" style="color:var(--acc)">Admin</div>
+      <h1 class="font-display text-3xl font-bold">Results Dashboard</h1>
+      <p class="muted text-sm mt-1" id="adminMode"></p>
+    </div>
+    <div class="flex gap-2">
+      <button id="exportCsv" class="btn btn-ghost text-sm py-2">Export CSV</button>
+      <button id="adminLogout" class="btn btn-acc text-sm py-2">Lock &amp; exit</button>
+    </div>
+  </div>
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+    <div class="panel2 p-4"><div class="label">Test-takers</div><div class="font-mono text-3xl font-bold" id="stTakers">0</div><div class="text-xs muted">unique students/devices</div></div>
+    <div class="panel2 p-4"><div class="label">Attempts</div><div class="font-mono text-3xl font-bold" id="stAttempts">0</div><div class="text-xs muted">exams submitted</div></div>
+    <div class="panel2 p-4"><div class="label">Average</div><div class="font-mono text-3xl font-bold" id="stAvg">–</div><div class="text-xs muted">mean percentage</div></div>
+    <div class="panel2 p-4"><div class="label">Pass rate</div><div class="font-mono text-3xl font-bold" id="stPass">–</div><div class="text-xs muted">scored ≥ 50%</div></div>
+  </div>
+  <div class="grid grid-cols-3 gap-3 mb-6">
+    <div class="panel2 p-4"><div class="label">👦 Boys</div><div class="font-mono text-3xl font-bold" style="color:#60a5fa" id="stBoys">0</div><div class="text-xs muted" id="stBoysA">0 attempts</div></div>
+    <div class="panel2 p-4"><div class="label">👧 Girls</div><div class="font-mono text-3xl font-bold" style="color:#f0a6c5" id="stGirls">0</div><div class="text-xs muted" id="stGirlsA">0 attempts</div></div>
+    <div class="panel2 p-4"><div class="label">⚗️ Not specified</div><div class="font-mono text-3xl font-bold" id="stNone">0</div><div class="text-xs muted" id="stNoneA">0 attempts</div></div>
+  </div>
+  <div class="panel overflow-hidden">
+    <div class="p-4 border-b flex flex-wrap gap-3 items-center justify-between" style="border-color:var(--line)">
+      <input id="adminSearch" placeholder="Search by student ID…" class="px-3 py-2 text-sm w-full sm:w-72">
+      <div class="flex items-center gap-2 text-xs muted"><span class="w-2 h-2 rounded-full animate-pulse" style="background:var(--acc)"></span> Live updates</div>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="text-left label"><tr>
+          <th class="px-4 py-3">#</th><th class="px-4 py-3">Student ID</th><th class="px-4 py-3">Gender</th><th class="px-4 py-3">Date &amp; time</th>
+          <th class="px-4 py-3">Lecture</th><th class="px-4 py-3">Difficulty</th><th class="px-4 py-3 text-right">Score</th><th class="px-4 py-3 text-right">%</th>
+        </tr></thead>
+        <tbody id="adminRows"></tbody>
+      </table>
+    </div>
+    <div id="adminEmpty" class="p-10 text-center muted hidden">No results yet.</div>
+  </div>
+</section>
+</main>
+
+<!-- toast -->
+<div id="toast" class="fixed left-1/2 -translate-x-1/2 bottom-6 z-50 opacity-0 pointer-events-none translate-y-4">
+  <div class="ar px-6 py-3 rounded-2xl font-bold text-lg shadow-2xl" style="background:var(--amber);color:var(--amberInk)" id="toastText"></div>
+</div>
+
+<!-- hidden code box -->
+<div id="codeBox" class="hidden fixed inset-0 z-50 grid place-items-center p-4" style="background:var(--overlay)">
+  <div class="panel w-full max-w-xs p-5 fade">
+    <input id="codeInput" type="password" autocomplete="off" placeholder="Code" class="w-full px-4 py-3">
+    <p id="codeErr" class="text-sm mt-2 hidden" style="color:var(--rose)">Invalid code.</p>
+    <button id="codeGo" class="btn btn-acc w-full mt-3">OK</button>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   1) FIREBASE CONFIGURATION
+   - Students can only CREATE a result (cannot read anything).
+   - No visible admin button: tap the "Bs" logo 5 times quickly, or open the
+     site URL ending in #admin, to get a code box. The right code opens the
+     dashboard and signs in to Firebase Auth as ADMIN_EMAIL (password = code),
+     so results are protected by the Firestore rules for /biostat_results.
+   ===================================================================== */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyCJqfG042jw_bA3L_6vdMYja11re16Cx48",
+  authDomain: "bioc209-exam.firebaseapp.com",
+  projectId: "bioc209-exam",
+  storageBucket: "bioc209-exam.firebasestorage.app",
+  messagingSenderId: "877329298616",
+  appId: "1:877329298616:web:17e96833f8c3bd257c704d"
+};
+const ADMIN_EMAIL = "admin@bioc209.app";
+const COLLECTION  = "biostat_results";
+const PASS_HASH   = "c65fee33c7c6897d28bbb7128cbc38f79f56f8d2c71f98cb3c9a26e8ca0618cf"; // SHA-256 of the code
+const LECTURE_SHARE = 0.12;   // ~12% new lecture-based questions per exam (≈88% bank) in 'mix' mode
+
+/* =====================================================================
+   2) QUESTION DATA
+   type 'mcq'  : o = options, a = correct index, e = explanation
+   type 'essay': ans = model-answer lines (student self-marks)
+   src 'bank' = course question bank · src 'lecture' = new, from lecture details
+   g = near-duplicate group (never two from one group in the same exam)
+   ===================================================================== */
+const QUESTIONS = [
+{"id": 1, "scope": "L1", "src": "bank", "type": "mcq", "tag": "Question Bank · Q1", "diff": "easy", "q": "Which of the following is a measure of central tendency?", "o": ["Standard deviation", "Mean", "Variance", "Range"], "a": 1, "e": "Mean, median, mode and geometric mean are measures of central tendency; standard deviation, variance and range measure dispersion."},
+{"id": 2, "scope": "L1", "src": "bank", "type": "mcq", "tag": "Question Bank · Q2", "diff": "easy", "q": "Which of the following is not a measure of central tendency?", "o": ["Mode", "Mean", "Coefficient of Variation", "Median"], "a": 2, "e": "The coefficient of variation is a measure of dispersion (S / x̄ × 100), not of central tendency."},
+{"id": 3, "scope": "L2", "src": "bank", "type": "mcq", "tag": "Question Bank · Q3", "diff": "easy", "q": "The Mode of this data: 12, 10, 13, 10, 8, 7, 10, 5, 8 is", "o": ["5", "13", "8", "10"], "a": 3, "e": "10 appears 3 times — more than any other value — so the mode is 10."},
+{"id": 4, "scope": "L2", "src": "bank", "type": "mcq", "tag": "Question Bank · Q4", "diff": "medium", "q": "The Median of this data: 20, 10, 8, 15, 5, 25, 15 is", "o": ["15", "20", "10", "8"], "a": 0, "e": "Arrange: 5, 8, 10, 15, 15, 20, 25. n = 7 (odd) → the middle (4th) value = 15."},
+{"id": 5, "scope": "L2", "src": "bank", "type": "mcq", "tag": "Question Bank · Q5", "diff": "easy", "q": "The Mode of this data: 4, 12, 5, 7, 6, 5, 8, 5 is", "o": ["5", "6", "7", "8"], "a": 0, "e": "5 appears 3 times, more than any other value."},
+{"id": 6, "scope": "L1", "src": "bank", "type": "mcq", "tag": "Question Bank · Q6", "diff": "medium", "q": "The Mean of this data: 4, 12, 5, 7, 6, 5, 8, 6, 12, 5 is", "o": ["5", "6", "7", "8"], "a": 2, "e": "Sum = 70, n = 10 → x̄ = 70 / 10 = 7.", "g": "meanA"},
+{"id": 7, "scope": "L2", "src": "bank", "type": "mcq", "tag": "Question Bank · Q7", "diff": "medium", "q": "The Median of this data: 4, 12, 5, 7, 6, 5, 8, 6, 12, 5 is", "o": ["5", "6", "7", "8"], "a": 1, "e": "Arrange: 4, 5, 5, 5, 6, 6, 7, 8, 12, 12. n = 10 (even) → median = (5th + 6th) / 2 = (6 + 6) / 2 = 6."},
+{"id": 8, "scope": "L1", "src": "bank", "type": "mcq", "tag": "Question Bank · Q8", "diff": "easy", "q": "The Mean is the one of Measures of ……", "o": ["Dispersion", "Central Tendency", "Quantitative Data", "Qualitative Data"], "a": 1, "e": "The mean is a measure of central tendency."},
+{"id": 9, "scope": "L2", "src": "bank", "type": "mcq", "tag": "Question Bank · Q9", "diff": "easy", "q": "The Mode is the one of Measures of ……", "o": ["Dispersion", "Central Tendency", "Quantitative Data", "Qualitative Data"], "a": 1, "e": "The mode is a measure of central tendency."},
+{"id": 10, "scope": "L2", "src": "bank", "type": "mcq", "tag": "Question Bank · Q10", "diff": "easy", "q": "The Median is the one of Measures of ……", "o": ["Dispersion", "Central Tendency", "Quantitative Data", "Qualitative Data"], "a": 1, "e": "The median is a measure of central tendency."},
+{"id": 11, "scope": "L1", "src": "bank", "type": "mcq", "tag": "Question Bank · Q11", "diff": "medium", "q": "The Mean of this data: 10, 15, 20, 15, 25, 30, 15 is", "o": ["25", "10", "18.57", "15"], "a": 2, "e": "Sum = 130, n = 7 → x̄ = 130 / 7 = 18.57."},
+{"id": 12, "scope": "L2", "src": "bank", "type": "mcq", "tag": "Question Bank · Q12", "diff": "easy", "q": "The Mode of this data: 10, 15, 20, 15, 25, 30, 15 is", "o": ["25", "10", "20", "15"], "a": 3, "e": "15 appears 3 times — the most frequent value."},
+{"id": 13, "scope": "L2", "src": "bank", "type": "mcq", "tag": "Question Bank · Q13", "diff": "medium", "q": "The Median of this data: 10, 15, 20, 15, 25, 30, 15 is", "o": ["25", "10", "20", "15"], "a": 3, "e": "Arrange: 10, 15, 15, 15, 20, 25, 30. n = 7 → the 4th value = 15."},
+{"id": 14, "scope": "L1", "src": "bank", "type": "mcq", "tag": "Question Bank · Q14", "diff": "easy", "q": "The type of this data: 10, 12, 15, 8, 9 is", "o": ["grouped data", "central tendency", "ungrouped data", "Qualitative Data"], "a": 2, "e": "Lecture 1: a list of raw numbers (10, 25, 15, 13, …) is quantitative ungrouped data."},
+{"id": 15, "scope": "L1", "src": "bank", "type": "mcq", "tag": "Question Bank · Q15", "diff": "easy", "q": "The type of this data: Blood Group: A, B, O is", "o": ["grouped data", "central tendency", "ungrouped data", "Qualitative Data"], "a": 3, "e": "Lecture 1: blood group (A, B, O) is the example of qualitative data."},
+{"id": 16, "scope": "L1", "src": "bank", "type": "mcq", "tag": "Question Bank · Q16", "diff": "easy", "q": "The type of this data: virus analysis is", "o": ["grouped data", "central tendency", "ungrouped data", "Qualitative Data"], "a": 3, "e": "Lecture 1 lists virus analysis with blood group as qualitative data."},
+{"id": 17, "scope": "L1", "src": "bank", "type": "mcq", "tag": "Question Bank · Q17", "diff": "easy", "q": "The type of this data: A frequency table is", "o": ["grouped data", "central tendency", "ungrouped data", "Qualitative Data"], "a": 0, "e": "Lecture 1: grouped data = a frequency table (class intervals with frequencies)."},
+{"id": 18, "scope": "L2", "src": "bank", "type": "mcq", "tag": "Question Bank · Q18", "diff": "easy", "q": "The Mode of this data is: 5, 10, 13, 7, 6, 10, 8, 9, 12, 10", "o": ["5", "6", "10", "8"], "a": 2, "e": "10 appears 3 times — the most frequent value."},
+{"id": 19, "scope": "L1", "src": "bank", "type": "mcq", "tag": "Question Bank · Q19", "diff": "medium", "q": "The Mean of this data: 5, 10, 13, 7, 6, 10, 8, 9, 12, 10", "o": ["9", "6", "7", "8"], "a": 0, "e": "Sum = 90, n = 10 → x̄ = 9.", "g": "meanB"},
+{"id": 20, "scope": "L2", "src": "bank", "type": "mcq", "tag": "Question Bank · Q20", "diff": "medium", "q": "The Median of this data: 5, 10, 13, 7, 6, 10, 8, 9, 12, 10 is", "o": ["5", "9.5", "7", "8"], "a": 1, "e": "Arrange: 5, 6, 7, 8, 9, 10, 10, 10, 12, 13. n = 10 → (9 + 10) / 2 = 9.5."},
+{"id": 21, "scope": "L1", "src": "bank", "type": "mcq", "tag": "Question Bank · Q21", "diff": "easy", "q": "To compare the action of two different drugs is the application of……", "o": ["Statistics", "ungrouped data", "grouped data", "Qualitative Data"], "a": 0, "e": "Lecture 1, uses of statistics: (i) finding the action of a drug, (ii) comparing the action of two different drugs."},
+{"id": 22, "scope": "L1", "src": "bank", "type": "mcq", "tag": "Question Bank · Q22", "diff": "easy", "q": "Graphical representation of data by using", "o": ["Histogram", "Measures of central tendency", "Measures of Dispersion", "Qualitative Data"], "a": 0, "e": "Lecture 1: graphical representation — 1) histogram, 2) frequency curve.", "g": "graph"},
+{"id": 23, "scope": "L2", "src": "bank", "type": "mcq", "tag": "Question Bank · Q23", "diff": "medium", "q": "The Median of this data: 5, 7, 8, 12, 5, 7, 6, 7 is", "o": ["5", "7", "6", "8"], "a": 1, "e": "Arrange: 5, 5, 6, 7, 7, 7, 8, 12. n = 8 → (4th + 5th) / 2 = (7 + 7) / 2 = 7."},
+{"id": 24, "scope": "L1", "src": "bank", "type": "mcq", "tag": "Question Bank · Q24", "diff": "medium", "q": "The Mean of this data: 5, 7, 8, 12, 5, 7, 6, 7 is", "o": ["5.125", "6.125", "7.125", "8.125"], "a": 2, "e": "Sum = 57, n = 8 → x̄ = 57 / 8 = 7.125."},
+{"id": 25, "scope": "L2", "src": "bank", "type": "mcq", "tag": "Question Bank · Q25", "diff": "easy", "q": "The Mode of this data: 5, 7, 8, 12, 5, 7, 6, 7 is", "o": ["5", "6", "8", "7"], "a": 3, "e": "7 appears 3 times (Lecture 2, Example 3: Mo = 7)."},
+{"id": 26, "scope": "L1", "src": "bank", "type": "mcq", "tag": "Question Bank · Q26", "diff": "easy", "q": "The study of how to collect, organize, analyze and interpret numerical information of data is called", "o": ["Statistics", "Central Tendency", "Quantitative Data", "Qualitative Data"], "a": 0, "e": "This is the definition of statistics in Lecture 1."},
+{"id": 27, "scope": "L1", "src": "bank", "type": "mcq", "tag": "Question Bank · Q27", "diff": "easy", "q": "The single value that attempts to describe a set of data by identifying the central position within that set of data is called", "o": ["Statistics", "Measures of central tendency", "Quantitative Data", "Qualitative Data"], "a": 1, "e": "Lecture 1 definition of a measure of central tendency."},
+{"id": 28, "scope": "L2", "src": "bank", "type": "mcq", "tag": "Question Bank · Q28", "diff": "easy", "q": "The most frequent score in the data is called", "o": ["Mode", "Mean", "Geometric Mean", "Median"], "a": 0, "e": "Lecture 2: the mode is the most frequent score in the data."},
+{"id": 29, "scope": "L2", "src": "bank", "type": "mcq", "tag": "Question Bank · Q29", "diff": "easy", "q": "The middle value in distribution when the values are arranged in ascending or descending order is called", "o": ["Mode", "Mean", "Geometric Mean", "Median"], "a": 3, "e": "Lecture 2: the median is the middle value after ordering the data."},
+{"id": 30, "scope": "L1", "src": "bank", "type": "mcq", "tag": "Question Bank · Q30", "diff": "easy", "q": "The Geometric Mean is the one of Measures of ……", "o": ["Dispersion", "Central Tendency", "Quantitative Data", "Qualitative Data"], "a": 1, "e": "The geometric mean is a measure of central tendency."},
+{"id": 31, "scope": "L3", "src": "bank", "type": "mcq", "tag": "Question Bank · Q31", "diff": "easy", "q": "The measures that help to interpret the variability of data i.e. to know how much homogenous or heterogeneous the data is called ......", "o": ["Dispersion", "Central Tendency", "Quantitative Data", "Qualitative Data"], "a": 0, "e": "Lecture 3 definition: measures of dispersion show how squeezed or scattered the data is."},
+{"id": 32, "scope": "L3", "src": "bank", "type": "mcq", "tag": "Question Bank · Q32", "diff": "hard", "q": "If Mean = 60 and Variance = 324, the Coefficient of Variation equals:", "o": ["30%", "5.4%", "54%", "45%"], "a": 0, "e": "S = √324 = 18 → C.V = (S / x̄) × 100 = (18 / 60) × 100 = 30%."},
+{"id": 33, "scope": "L3", "src": "bank", "type": "mcq", "tag": "Question Bank · Q33", "diff": "medium", "q": "The variance of a sample of 169 observations equals 576. The standard deviation of the sample equals:", "o": ["13", "24", "576", "169"], "a": 1, "e": "S = √variance = √576 = 24. (The number of observations, 169, is not needed.)"},
+{"id": 34, "scope": "L3", "src": "bank", "type": "mcq", "tag": "Question Bank · Q34", "diff": "medium", "q": "The variance of a sample of 25 observations equals 100. The standard deviation of the sample equals:", "o": ["5", "10", "25", "100"], "a": 1, "e": "S = √100 = 10."},
+{"id": 35, "scope": "L3", "src": "bank", "type": "mcq", "tag": "Question Bank · Q35", "diff": "easy", "q": "Which of the following is a measure of dispersion?", "o": ["Mode", "Mean", "Coefficient of Variation", "Median"], "a": 2, "e": "Measures of dispersion: range, variance, standard deviation, coefficient of variation."},
+{"id": 36, "scope": "L3", "src": "bank", "type": "mcq", "tag": "Question Bank · Q36", "diff": "easy", "q": "Which of the following is a measure of dispersion ?", "o": ["Median", "Mean", "Standard Deviation", "A, B"], "a": 2, "e": "Median and mean are central tendency; standard deviation measures dispersion."},
+{"id": 37, "scope": "L3", "src": "bank", "type": "mcq", "tag": "Question Bank · Q37", "diff": "easy", "q": "The Range is the one of Measures of ……", "o": ["Dispersion", "Central Tendency", "Quantitative Data", "Qualitative Data"], "a": 0, "e": "The range (largest − smallest) is a measure of dispersion."},
+{"id": 38, "scope": "L3", "src": "bank", "type": "mcq", "tag": "Question Bank · Q38", "diff": "easy", "q": "The Variance is the one of Measures of ……", "o": ["Dispersion", "Central Tendency", "Quantitative Data", "Qualitative Data"], "a": 0, "e": "Variance is a measure of dispersion."},
+{"id": 39, "scope": "L3", "src": "bank", "type": "mcq", "tag": "Question Bank · Q39", "diff": "easy", "q": "The Standard deviation is the one of Measures of ……", "o": ["Dispersion", "Central Tendency", "Quantitative Data", "Qualitative Data"], "a": 0, "e": "Standard deviation is a measure of dispersion."},
+{"id": 40, "scope": "L3", "src": "bank", "type": "mcq", "tag": "Question Bank · Q40", "diff": "easy", "q": "The Coefficient of Variation is the one of Measures of ……", "o": ["Dispersion", "Central Tendency", "Quantitative Data", "Qualitative Data"], "a": 0, "e": "The coefficient of variation is a measure of dispersion."},
+{"id": 41, "scope": "L1", "src": "bank", "type": "mcq", "tag": "Question Bank · Q41", "diff": "easy", "q": "Graphical representation of data by using", "o": ["Frequency Curve", "Measures of central tendency", "Measures of Dispersion", "Qualitative Data"], "a": 0, "e": "Lecture 1: graphical representation — 1) histogram, 2) frequency curve.", "g": "graph"},
+{"id": 42, "scope": "L3", "src": "bank", "type": "mcq", "tag": "Question Bank · Q42", "diff": "medium", "q": "The Range of this data: 4, 12, 5, 7, 6, 5, 8, 6, 12, 5 is", "o": ["5", "6", "7", "8"], "a": 3, "e": "R = largest − smallest = 12 − 4 = 8."},
+{"id": 43, "scope": "L3", "src": "bank", "type": "mcq", "tag": "Question Bank · Q43", "diff": "hard", "q": "The Variance of this data: 4, 12, 5, 7, 6, 5, 8, 6, 12, 5 is", "o": ["8.222", "9.222", "10.222", "11.222"], "a": 0, "e": "x̄ = 7; Σ(x − x̄)² = 74; S² = 74 / (n − 1) = 74 / 9 = 8.222."},
+{"id": 44, "scope": "L3", "src": "bank", "type": "mcq", "tag": "Question Bank · Q44", "diff": "hard", "q": "The Standard Deviation of this data: 4, 12, 5, 7, 6, 5, 8, 6, 12, 5 is", "o": ["2.867", "3.982", "4", "1.867"], "a": 0, "e": "S = √8.222 = 2.867."},
+{"id": 45, "scope": "L1", "src": "bank", "type": "mcq", "tag": "Question Bank · Q45", "diff": "medium", "q": "The Mean of this data 4, 12, 5, 7, 6, 5, 8, 6, 12, 5 is", "o": ["5", "6", "7", "8"], "a": 2, "e": "Sum = 70, n = 10 → x̄ = 7.", "g": "meanA"},
+{"id": 46, "scope": "L3", "src": "bank", "type": "mcq", "tag": "Question Bank · Q46", "diff": "hard", "q": "The Coefficient of Variation of this data 4, 12, 5, 7, 6, 5, 8, 6, 12, 5 is", "o": ["41.33 %", "34.33 %", "39.96%", "40.96 %"], "a": 3, "e": "C.V = (S / x̄) × 100 = (2.867 / 7) × 100 = 40.96%."},
+{"id": 47, "scope": "L3", "src": "bank", "type": "mcq", "tag": "Question Bank · Q47", "diff": "medium", "q": "The Range of this data: 5, 10, 13, 7, 6, 10, 8, 9, 12, 10 is", "o": ["5", "6", "7", "8"], "a": 3, "e": "R = 13 − 5 = 8."},
+{"id": 48, "scope": "L3", "src": "bank", "type": "mcq", "tag": "Question Bank · Q48", "diff": "hard", "q": "The Variance of this data 5, 10, 13, 7, 6, 10, 8, 9, 12, 10 is", "o": ["6.444", "7.324", "5.8746", "5.234"], "a": 0, "e": "x̄ = 9; Σ(x − x̄)² = 58; S² = 58 / 9 = 6.444."},
+{"id": 49, "scope": "L3", "src": "bank", "type": "mcq", "tag": "Question Bank · Q49", "diff": "hard", "q": "The Standard Deviation of this data 5, 10, 13, 7, 6, 10, 8, 9, 12, 10 is", "o": ["4.546", "5.19615", "3.2915", "2.5385"], "a": 3, "e": "S = √6.444 = 2.5385."},
+{"id": 50, "scope": "L1", "src": "bank", "type": "mcq", "tag": "Question Bank · Q50", "diff": "medium", "q": "The Mean of this data 5, 10, 13, 7, 6, 10, 8, 9, 12, 10 is", "o": ["7", "8", "9", "10"], "a": 2, "e": "Sum = 90, n = 10 → x̄ = 9.", "g": "meanB"},
+{"id": 51, "scope": "L3", "src": "bank", "type": "mcq", "tag": "Question Bank · Q51", "diff": "hard", "q": "The Coefficient of Variation of this data 5, 10, 13, 7, 6, 10, 8, 9, 12, 10 is", "o": ["26.5413 %", "25.625 %", "27.4535 %", "28.206 %"], "a": 3, "e": "C.V = (2.5385 / 9) × 100 = 28.206%."},
+{"id": 52, "scope": "L3", "src": "bank", "type": "mcq", "tag": "Question Bank · Q52", "diff": "medium", "q": "The variance of a sample of 25 observations equals 36. The standard deviation of the sample equals:", "o": ["5", "6", "25", "36"], "a": 1, "e": "S = √36 = 6."},
+{"id": 53, "scope": "L4", "src": "bank", "type": "mcq", "tag": "Question Bank · Q53", "diff": "easy", "q": "To obtain the relationship between two variables when the two variables are Quantitative data, we use", "o": ["Mode", "Mean", "Pearson", "Median"], "a": 2, "e": "Pearson's correlation coefficient (r) measures the relationship between two quantitative variables."},
+{"id": 54, "scope": "L4", "src": "bank", "type": "mcq", "tag": "Question Bank · Q54", "diff": "easy", "q": "To obtain the relationship between two variables when the two variables are Qualitative data, we use", "o": ["Mode", "Mean", "Pearson", "Spearman"], "a": 3, "e": "Spearman's rank correlation (rs) is used for qualitative (ranked) data."},
+{"id": 55, "scope": "L4", "src": "bank", "type": "mcq", "tag": "Question Bank · Q55", "diff": "medium", "q": "When coefficient Pearson correlation (r) equals 0.8, then the type of correlation is", "o": ["Moderate positive correlation", "Weak positive correlation", "Strong positive correlation", "None of these"], "a": 2, "e": "Lecture 4 table: r in [0.8, 1) → strong positive correlation."},
+{"id": 56, "scope": "L4", "src": "bank", "type": "mcq", "tag": "Question Bank · Q56", "diff": "medium", "q": "When coefficient Pearson correlation (r) equals 0.5, then the type of correlation is", "o": ["Moderate positive correlation", "Weak positive correlation", "Strong positive correlation", "None of these"], "a": 0, "e": "Lecture 4 table: r in [0.5, 0.8) → moderate positive correlation."},
+{"id": 57, "scope": "L4", "src": "bank", "type": "mcq", "tag": "Question Bank · Q57", "diff": "easy", "q": "When coefficient Pearson correlation (r) equals 1, then the type of correlation is", "o": ["Moderate positive correlation", "Strong positive correlation", "Perfect positive correlation", "None of these"], "a": 2, "e": "r = +1 → perfect positive correlation."},
+{"id": 58, "scope": "L4", "src": "bank", "type": "mcq", "tag": "Question Bank · Q58", "diff": "easy", "q": "When coefficient Pearson correlation (r) equals Zero, then the type of correlation is", "o": ["Moderate positive correlation", "Weak positive correlation", "No correlation", "None of these"], "a": 2, "e": "r = 0 → no correlation."},
+{"id": 59, "scope": "L4", "src": "bank", "type": "mcq", "tag": "Question Bank · Q59", "diff": "medium", "q": "When Spearman correlation coefficient (rs) equals - 0.8, then the type of correlation is", "o": ["Moderate negative correlation", "Weak negative correlation", "Strong negative correlation", "None of these"], "a": 2, "e": "Like +0.8 on the positive side, −0.8 is classed as strong negative correlation."},
+{"id": 60, "scope": "L4", "src": "bank", "type": "mcq", "tag": "Question Bank · Q60", "diff": "medium", "q": "When Spearman correlation coefficient (rs) equals - 0.5, then the type of correlation is", "o": ["Moderate negative correlation", "Weak negative correlation", "Strong negative correlation", "None of these"], "a": 0, "e": "Lecture 4 table: (−0.8, −0.5] → moderate negative correlation."},
+{"id": 61, "scope": "L4", "src": "bank", "type": "mcq", "tag": "Question Bank · Q61", "diff": "easy", "q": "When Spearman correlation coefficient (rs) equals -1, then the type of correlation is", "o": ["Moderate negative correlation", "Strong positive correlation", "Perfect negative correlation", "None of these"], "a": 2, "e": "rs = −1 → perfect negative correlation."},
+{"id": 62, "scope": "L4", "src": "bank", "type": "mcq", "tag": "Question Bank · Q62", "diff": "medium", "q": "When Spearman correlation coefficient (rs) equals - 0.99, then the type of correlation is", "o": ["Moderate negative correlation", "Strong negative correlation", "Perfect negative correlation", "None of these"], "a": 1, "e": "Lecture 4 table: (−1, −0.8) → strong negative. Only exactly −1 is perfect."},
+{"id": 63, "scope": "L4", "src": "bank", "type": "mcq", "tag": "Question Bank · Q63", "diff": "easy", "q": "The value of the coefficient Pearson correlation (r) always lies between:", "o": ["[0, 1 ]", "[–1 , 1]", "(–Infinity, Infinity)", "[0 , Infinity)"], "a": 1, "e": "Lecture 4: −1 ≤ r ≤ 1."},
+{"id": 64, "scope": "L4", "src": "bank", "type": "mcq", "tag": "Question Bank · Q64", "diff": "easy", "q": "The value of the Spearman correlation coefficient (rs) always lies between:", "o": ["[0 , 1 ]", "[–1 , 1]", "(–Infinity, Infinity)", "[0 , Infinity)"], "a": 1, "e": "Like Pearson's r, Spearman's rs lies between −1 and 1."},
+{"id": 65, "scope": "L5", "src": "bank", "type": "mcq", "tag": "Question Bank · Q65", "diff": "easy", "q": "The regression line equation of Y on X is:", "o": ["Y = B0 + B1X", "X = B0 + B1Y", "X= B0 - B1 Y", "None of these"], "a": 0, "e": "Lecture 5: y = β₀ + β₁x (Y is predicted from X)."},
+{"id": 66, "scope": "L5", "src": "bank", "type": "mcq", "tag": "Question Bank · Q66", "diff": "easy", "q": "In the regression equation Y = a + b X, the coefficient b represents:", "o": ["Correlation", "Slope", "Mean of Y", "None of these"], "a": 1, "e": "b (β₁) is the slope of the regression line."},
+{"id": 67, "scope": "L5", "src": "bank", "type": "mcq", "tag": "Question Bank · Q67", "diff": "easy", "q": "In the regression equation Y = a + b X, the coefficient a represents:", "o": ["Correlation", "Slope", "Length Intercept from y", "None of these"], "a": 2, "e": "a (β₀) is the intercept on the y-axis (the value of Y when X = 0)."},
+{"id": 68, "scope": "L4", "src": "bank", "type": "mcq", "tag": "Question Bank · Q68", "diff": "medium", "q": "When Spearman correlation coefficient (rs) equals - 0.1, then the type of correlation is", "o": ["Moderate negative correlation", "Weak negative correlation", "Strong negative correlation", "None of these"], "a": 1, "e": "Lecture 4 table: (−0.5, 0) → weak negative correlation."},
+{"id": 69, "scope": "L5", "src": "bank", "type": "mcq", "tag": "Question Bank · Q69", "diff": "easy", "q": "An experiment whose outcomes cannot be predicted with certainty. However, in most cases the collection of every possible outcome of experiment can be listed is called", "o": ["Sample space", "Random experiments", "Event", "None of these"], "a": 1, "e": "Lecture 5, 1.1: definition of a random experiment."},
+{"id": 70, "scope": "L5", "src": "bank", "type": "mcq", "tag": "Question Bank · Q70", "diff": "easy", "q": "The set of all possible outcomes of an experiment is called", "o": ["Sample space", "Random experiments", "Event", "None of these"], "a": 0, "e": "Lecture 5, 1.2: the sample space is the set of all possible outcomes."},
+{"id": 71, "scope": "L5", "src": "bank", "type": "mcq", "tag": "Question Bank · Q71", "diff": "easy", "q": "Experiment: Tossing a fair coin Sample space is", "o": ["S={H, T}", "S={H }", "S={ T}", "None of these"], "a": 0, "e": "Lecture 5, Example 1.1: S = {H, T} (H = head, T = tail)."},
+{"id": 72, "scope": "L5", "src": "bank", "type": "mcq", "tag": "Question Bank · Q72", "diff": "easy", "q": "A coin is tossed twice, and then the Sample space is", "o": ["S={HH, HT}", "S={ TH, TT}", "S={HH, HT, TH, TT}", "None of these"], "a": 2, "e": "Lecture 5, Example 1.3: S = {HH, HT, TH, TT}."},
+{"id": 73, "scope": "L5", "src": "bank", "type": "mcq", "tag": "Question Bank · Q73", "diff": "easy", "q": "Consider the experiment of rolling dice and observing the number which appears on the uppermost face of the dice, then the Sample space is", "o": ["S={1, 2, 3, 4, 5, 6}", "S={1,2 }", "S={ 1,2,3}", "None of these"], "a": 0, "e": "Lecture 5, Example 1.2: S = {1, 2, 3, 4, 5, 6}."},
+{"id": 74, "scope": "L5", "src": "bank", "type": "mcq", "tag": "Question Bank · Q74", "diff": "medium", "q": "When a coin is tossed twice, the total number of Sample space is:", "o": ["2", "8", "4", "None of these"], "a": 2, "e": "2 × 2 = 4 outcomes: HH, HT, TH, TT."},
+{"id": 75, "scope": "L5", "src": "bank", "type": "mcq", "tag": "Question Bank · Q75", "diff": "medium", "q": "Consider the experiment of rolling two dice, then the total number of Sample space is:", "o": ["6", "12", "36", "None of these"], "a": 2, "e": "6 × 6 = 36 outcomes (Lecture 6, Example 1.6 lists them all)."},
+{"id": 76, "scope": "L1", "src": "lecture", "type": "mcq", "tag": "Lecture 1 · New", "diff": "medium", "q": "In a frequency table, what are the class boundaries of the class 105 – 109?", "o": ["104.5 – 109.5", "105 – 109", "105.5 – 108.5", "104 – 110"], "a": 0, "e": "Lecture 1, Example 1: subtract 0.5 from the lower limit and add 0.5 to the upper limit → 104.5 – 109.5."},
+{"id": 77, "scope": "L2", "src": "lecture", "type": "mcq", "tag": "Lecture 2 · New", "diff": "hard", "q": "What is the geometric mean of the two values 2 and 8?", "o": ["4", "5", "10", "16"], "a": 0, "e": "Geometric mean (ungrouped) = ⁿ√(x₁ · x₂ · … · xₙ) = √(2 × 8) = √16 = 4. (The arithmetic mean would be 5.)"},
+{"id": 78, "scope": "L3", "src": "lecture", "type": "mcq", "tag": "Lecture 3 · New", "diff": "medium", "q": "For grouped data, the range is calculated as:", "o": ["Upper boundary of the highest class − lower boundary of the lowest class", "Largest frequency − smallest frequency", "Sum of the class midpoints ÷ number of classes", "Upper limit of the first class − lower limit of the last class"], "a": 0, "e": "Lecture 3: for grouped data, R = upper boundary of the highest class − lower boundary of the lowest class (e.g. 70 − 10 = 60)."},
+{"id": 79, "scope": "L4", "src": "lecture", "type": "mcq", "tag": "Lecture 4 · New", "diff": "medium", "q": "If the Pearson correlation coefficient r = 0.65, the type of correlation is:", "o": ["Moderate positive correlation", "Weak positive correlation", "Strong positive correlation", "Perfect positive correlation"], "a": 0, "e": "Lecture 4 table: r in [0.5, 0.8) → moderate positive correlation."},
+{"id": 80, "scope": "L5", "src": "lecture", "type": "mcq", "tag": "Lecture 5 · New", "diff": "hard", "q": "The regression line of y on x is y = −0.1 + 0.70x. What is the predicted value of y when x = 10?", "o": ["6.9", "7.1", "6.0", "0.6"], "a": 0, "e": "ŷ = −0.1 + 0.70 × 10 = −0.1 + 7 = 6.9 (equation from Lecture 5, Example 7)."},
+{"id": 81, "scope": "L6", "src": "lecture", "type": "mcq", "tag": "Lecture 6 · New", "diff": "easy", "q": "In probability, the empty set ϕ is called:", "o": ["The impossible event", "The certain event", "A simple event", "The sample space"], "a": 0, "e": "Lecture 6: ϕ is the impossible event, S is the certain event, and a one-element subset of S is a simple event."},
+{"id": 82, "scope": "L6", "src": "lecture", "type": "mcq", "tag": "Lecture 6 · New", "diff": "easy", "q": "Two events A and B are mutually exclusive (disjoint) if and only if:", "o": ["A ∩ B = ϕ", "A ∪ B = S", "A ∩ B = S", "A = B"], "a": 0, "e": "Lecture 6: events that cannot occur together have an empty intersection, A ∩ B = ϕ."},
+{"id": 83, "scope": "L6", "src": "lecture", "type": "mcq", "tag": "Lecture 6 · New", "diff": "medium", "q": "According to De Morgan's law, (A ∪ B)ᶜ equals:", "o": ["Aᶜ ∩ Bᶜ", "Aᶜ ∪ Bᶜ", "A ∩ B", "A − B"], "a": 0, "e": "Lecture 6: (A ∪ B)ᶜ = Aᶜ ∩ Bᶜ and (A ∩ B)ᶜ = Aᶜ ∪ Bᶜ."},
+{"id": 84, "scope": "L6", "src": "lecture", "type": "mcq", "tag": "Lecture 6 · New", "diff": "medium", "q": "In how many ways can 2 chemists be selected from 4 chemists?", "o": ["6", "8", "12", "4"], "a": 0, "e": "C(4, 2) = 4! / (2! · 2!) = 6 (Lecture 6, Example 1.11)."},
+{"id": 85, "scope": "L6", "src": "lecture", "type": "mcq", "tag": "Lecture 6 · New", "diff": "medium", "q": "Out of 100 patients, 20 are males with blood group B. If one patient is selected at random, the probability that the patient is a male with blood group B is:", "o": ["0.2", "0.02", "0.5", "20"], "a": 0, "e": "P(A) = n(A) / n(S) = 20 / 100 = 0.2 (Lecture 6, Example 1.13)."},
+{"id": 86, "scope": "L6", "src": "lecture", "type": "mcq", "tag": "Lecture 6 · New", "diff": "easy", "q": "According to the axioms of probability, for every event A:", "o": ["0 ≤ P(A) ≤ 1", "P(A) > 1", "−1 ≤ P(A) ≤ 1", "P(A) = 1 always"], "a": 0, "e": "Axiom 2: 0 ≤ P(A) ≤ 1; Axiom 1: P(S) = 1."}
+];
+
+/* =====================================================================
+   3) APP
+   ===================================================================== */
+const SCOPES = [
+  { key:'ALL', num:'∞', sym:'Σ',  label:'All Lectures', sub:'Whole question bank',                    c:'var(--cA)' },
+  { key:'L1',  num:'01', sym:'x̄',  label:'Lecture 1',    sub:'Statistics, types of data, mean',          c:'var(--c1)' },
+  { key:'L2',  num:'02', sym:'Mo', label:'Lecture 2',    sub:'Geometric mean, mode & median',            c:'var(--c2)' },
+  { key:'L3',  num:'03', sym:'σ',  label:'Lecture 3',    sub:'Dispersion: range, variance, SD, C.V',     c:'var(--c4)' },
+  { key:'L4',  num:'04', sym:'r',  label:'Lecture 4',    sub:'Correlation: Pearson & Spearman',          c:'var(--c5)' },
+  { key:'L5',  num:'05', sym:'ŷ',  label:'Lecture 5',    sub:'Linear regression & sample space',         c:'var(--c6)' },
+  { key:'L6',  num:'06', sym:'P',  label:'Lecture 6',    sub:'Events & probability',                     c:'var(--c7)' }
+];
+const DIFFS = [ { key:'easy', label:'Easy' }, { key:'medium', label:'Medium' }, { key:'hard', label:'Hard' } ];
+const COUNTS = [10, 20, 30, 50];
+
+/* --- Arabic messages (gender-aware: G(male, female) picks the form; default = male/neutral) --- */
+const G = (m, f) => setup.gender === 'girl' ? f : m;
+const YA = (n) => n ? ' يا ' + n : '';
+const PRAISE = [
+  n => `تبارك الله${YA(n)} ${G('✨', '🌸')}`,
+  n => `ما شاء الله ${G('عليك', 'عليكي')}${YA(n)} ${G('🌟', '💖')}`,
+  n => `الله ينوّر${YA(n)} ${G('💡', '✨')}`,
+  n => `بارك الله ${G('فيك', 'فيكي')}${YA(n)} 🤍`,
+  n => `ربنا يزيدك علم${YA(n)} 📚`,
+  n => `اللهم بارك، إجابة في الجون${YA(n)} 🎯`,
+  n => G(`جامد${YA(n)}! كده صح 💪`, `شاطرة${YA(n)}! كده صح 🌷`),
+  n => G(`وحش${YA(n)} 🔥 ما شاء الله`, `برافو${YA(n)} 🎀 ما شاء الله`)
+];
+const NUDGE = [
+  n => `ولا يهمك${YA(n)}، المرة الجاية إن شاء الله ${G('💪', '🌸')}`,
+  n => `${G('قرّبت', 'قرّبتي')}${YA(n)}! ${G('بص', 'بصّي')} على الشرح تحت 👇`,
+  n => `عادي${YA(n)}، اللي بيتعلم بيغلط 🙂`,
+  n => `${G('ركّز', 'ركّزي')} معانا${YA(n)}، الشرح هيفكّها 🔍`
+];
+const STREAKS = {
+  3:  n => `3 ورا بعض 🔥 ${G('كمّل', 'كمّلي')}${YA(n)}!`,
+  5:  n => `5 ورا بعض! الله ينوّر ${G('🔥🔥', '💖💖')}`,
+  10: n => `شكلك مش ${G('بتهزر', 'بتهزري')}${YA(n)}، تبارك الله ${G('😎', '💅')}`,
+  15: n => `15 ورا بعض! ${G('إنت مذاكر ولا حافظ', 'إنتي مذاكرة ولا حافظة')} البنك؟ 😂`,
+  20: n => `20 ورا بعض… الدكتور لازم يعرف ${G('عنك', 'عنِك')} 👀`,
+  25: n => `25! حد ${G('يوقّفه ده', 'يوقّفها دي')} 😂${G('🔥', '✨')}`,
+  30: n => `لا، شكلك ${G('ناوي', 'ناوية')} على FULL MARK 🎯`,
+  40: n => `40!! ${G('ده إنت اللي المفروض تشرح', 'دي إنتي اللي المفروض تشرحي')} المحاضرة 😂`,
+  50: n => `50 ورا بعض… ما شاء الله، ربنا ${G('يحفظك', 'يحفظِك')} ${G('🏆', '👑')}`,
+  75: n => `75؟! ${G('إنت جاي تختبر', 'إنتي جاية تختبري')} البنك ولا البنك ${G('بيختبرك', 'بيختبرِك')}؟ 😂`,
+  100: n => `100 ورا بعض… تبارك الرحمن، ${G('أسطورة 👑', 'أسطورة 👑💖')}`
+};
+const ADHKAR = [
+  'صلِّ على خير الخلق ﷺ',
+  'اذكر الله 🤍 سبحان الله وبحمده، سبحان الله العظيم',
+  'اللهم صلِّ وسلم وبارك على سيدنا محمد ﷺ',
+  'لا حول ولا قوة إلا بالله',
+  'أستغفر الله العظيم وأتوب إليه',
+  'رَبِّ زِدْنِي عِلْمًا 📖',
+  'لا إله إلا أنت سبحانك إني كنت من الظالمين',
+  'سبحان الله، والحمد لله، ولا إله إلا الله، والله أكبر'
+];
+
+/* --- helpers --- */
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const pickOne = (a) => a[Math.floor(Math.random() * a.length)];
+const fmtTime = (s) => `${String(Math.floor(s / 60)).padStart(2,'0')}:${String(s % 60).padStart(2,'0')}`;
+const scopeOf = (k) => SCOPES.find(s => s.key === k) || SCOPES[0];
+const diffLabel = (k) => k === 'mixed' ? 'Mixed' : ((DIFFS.find(d => d.key === k) || {}).label || k);
+const SIM_MCQ = 32, SIM_ESSAY = 0;
+const poolFor = (scope) => QUESTIONS.filter(q => (scope === 'ALL' || q.scope === scope) && (
+  setup.mode === 'essay' ? (q.type === 'essay' && q.src === 'bank') : (setup.source !== 'bank' || q.src === 'bank')));
+function showView(name) {
+  ['setup','dua','exam','result','admin'].forEach(v => $('view-' + v).classList.toggle('hidden-view', v !== name));
+  const wasIslamic = document.body.classList.contains('islamic');
+  document.body.classList.toggle('islamic', name === 'dua');
+  if (name === 'dua') islamicDecor(); else if (wasIslamic) applyTheme();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+let toastT = null;
+function toast(msg, ms = 2600) {
+  $('toastText').textContent = msg;
+  const t = $('toast'); t.classList.remove('opacity-0', 'translate-y-4');
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.add('opacity-0', 'translate-y-4'), ms);
+}
+function confetti(n = 40) {
+  const set = setup.gender === 'girl' ? ['🌸','💖','✨','🎀','🦋','💗','🌷'] : setup.gender === 'boy' ? ['⚡','🔥','🏆','⭐','🚀','💪','🎯'] : ['🎉','✨','⭐','📊','📈','🏆','💚'];
+  for (let i = 0; i < n; i++) {
+    const s = document.createElement('div'); s.className = 'confetti'; s.textContent = pickOne(set);
+    s.style.left = Math.random() * 100 + 'vw'; s.style.animationDuration = (2.2 + Math.random() * 2.2) + 's';
+    s.style.animationDelay = (Math.random() * .8) + 's'; document.body.appendChild(s); setTimeout(() => s.remove(), 5500);
+  }
+}
+
+/* --- Firebase --- */
+const FB_ENABLED = !!FIREBASE_CONFIG.apiKey;
+let db = null, auth = null;
+if (FB_ENABLED) {
+  try { firebase.initializeApp(FIREBASE_CONFIG); db = firebase.firestore(); auth = firebase.auth();
+        auth.setPersistence(firebase.auth.Auth.Persistence.SESSION).catch(() => {}); }
+  catch (e) { console.error('Firebase init failed', e); }
+}
+const LOCAL_KEY = 'bios_demo_results', PENDING_KEY = 'bios_pending';
+const lsGet = (k) => { try { return JSON.parse(localStorage.getItem(k) || '[]'); } catch { return []; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
+function studentId() {
+  const make = () => 'Student-' + Array.from({ length: 4 }, () => 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'[Math.floor(Math.random() * 31)]).join('');
+  try { let id = localStorage.getItem('bios_sid'); if (!id) { id = make(); localStorage.setItem('bios_sid', id); } return id; } catch { return make(); }
+}
+const SID = studentId();
+
+/* =================== SETUP =================== */
+const setup = { name: '', gender: '', scope: 'ALL', count: 10, diff: 'medium', source: 'mix', mode: 'custom' };
+try { setup.source = localStorage.getItem('bios_source') === 'bank' ? 'bank' : 'mix'; } catch {}
+try { const m = localStorage.getItem('bios_mode'); if (m === 'sim') setup.mode = m; } catch {}
+if (setup.mode === 'essay') setup.count = 5;
+try { setup.gender = localStorage.getItem('bios_gender') || ''; } catch {}
+try { setup.name = localStorage.getItem('bios_name') || ''; } catch {}
+$('studentName').value = setup.name;
+
+function renderSetup() {
+  const hi = setup.name ? `أهلاً يا ${setup.name} ${G('👋', '🌸')}`
+           : setup.gender === 'boy' ? 'أهلاً بيك يا بطل 👋' : setup.gender === 'girl' ? 'أهلاً بيكي يا بطلة 🌸' : 'Welcome to the lab 👋';
+  $('hello').textContent = hi;
+  $('hello').className = 'font-display text-3xl sm:text-4xl font-bold' + (hi.startsWith('Welcome') ? '' : ' ar text-right sm:text-left');
+  document.querySelectorAll('#genderChips .gchip').forEach(b => b.classList.toggle('on', b.dataset.gender === setup.gender));
+  $('scopeTiles').innerHTML = SCOPES.map(s => `
+    <button type="button" class="tile ${setup.scope === s.key ? 'on' : ''}" style="--c:${s.c};${poolFor(s.key).length ? '' : 'opacity:.35;cursor:not-allowed'}" data-scope="${s.key}" ${poolFor(s.key).length ? '' : 'disabled title="No bank questions for this lecture"'}>
+      <span class="num">${s.num}</span><span class="cnt">${poolFor(s.key).length} Q</span>
+      <div class="sym">${s.sym}</div><div class="font-semibold text-sm">${s.label}</div><div class="nm">${s.sub}</div>
+    </button>`).join('');
+  const max = poolFor(setup.scope).length;
+  $('countChips').innerHTML = COUNTS.map(c => `<button type="button" class="chip ${setup.count === c ? 'on' : ''}" data-count="${c}" ${c > max ? 'disabled' : ''}>${c}</button>`).join('')
+    + `<button type="button" class="chip ${setup.count === max ? 'on' : ''}" data-count="${max}">All ${max}</button>`;
+  $('customMax').textContent = `max ${max}`; $('customCount').max = max;
+  $('diffChips').innerHTML = DIFFS.map(d => {
+    const n = poolFor(setup.scope).filter(q => q.diff === d.key).length;
+    return `<button type="button" class="chip ${setup.diff === d.key ? 'on' : ''}" data-diff="${d.key}">${d.label} <span class="opacity-60">· ${n}</span></button>`;
+  }).join('');
+  const s = scopeOf(setup.scope);
+  document.querySelectorAll('#sourceChoices [data-source]').forEach(b => b.classList.toggle('on', b.dataset.source === setup.source));
+  document.querySelectorAll('#modeChoices [data-mode]').forEach(b => b.classList.toggle('on', b.dataset.mode === setup.mode));
+  $('secScope').classList.toggle('hidden', setup.mode === 'sim');
+  $('secCount').classList.toggle('hidden', setup.mode === 'sim');
+  $('secSource').classList.toggle('hidden', setup.mode !== 'custom');
+  $('secDiff').classList.toggle('hidden', setup.mode !== 'custom');
+  if (setup.mode === 'sim') { $('summary').innerHTML = `🎓 Exam simulation · <span class="font-mono">${SIM_MCQ}</span> MCQs · random from the whole question bank`; return; }
+  if (setup.mode === 'essay') { $('summary').innerHTML = `✍️ Short-answer only · <span class="font-mono">${setup.count}</span> questions · ${s.label}`; return; }
+  $('summary').innerHTML = `${setup.source === 'bank' ? '📘 Bank only · ' : ''}<span class="font-mono">${setup.count}</span> questions · ${s.label}${s.key !== 'ALL' ? ' — ' + s.sub : ''} · ${setup.count >= max ? 'all levels' : diffLabel(setup.diff)}`;
+}
+$('studentName').addEventListener('input', () => {
+  setup.name = $('studentName').value.trim().replace(/\s+/g, ' ').slice(0, 30);
+  try { localStorage.setItem('bios_name', setup.name); } catch {}
+  renderSetup();
+});
+/* ---- theme (gender) ---- */
+const DECOR = {
+  girl: { items: ['♡','✿','❀','✦','♡','✿','🎀','🌸','💗','✦','♡','❀','🦋','✿'], colors: ['#e39bb6','#b69ad8','#d16d7e','#e8b4c8','#c9a6e0'], op: [.18,.35] },
+  boy:  { items: ['⬡','⚡','▲','⬢','✦','⚡','∑','▲','⬢','σ'], colors: ['#3b82f6','#22d3ee','#22c55e','#60a5fa'], op: [.07,.16] }
+};
+function fillDecor(cfg, n) {
+  const d = $('decor'); d.innerHTML = '';
+  for (let i = 0; i < n; i++) {
+    const s = document.createElement('span');
+    s.textContent = pickOne(cfg.items);
+    s.style.left = (Math.random() * 96) + 'vw'; s.style.top = (Math.random() * 94) + 'vh';
+    s.style.fontSize = (cfg.size[0] + Math.random() * (cfg.size[1] - cfg.size[0])) + 'px'; s.style.color = pickOne(cfg.colors);
+    s.style.opacity = cfg.op[0] + Math.random() * (cfg.op[1] - cfg.op[0]);
+    s.style.animationDuration = (8 + Math.random() * 10) + 's'; s.style.animationDelay = (-Math.random() * 8) + 's';
+    d.appendChild(s);
+  }
+}
+function islamicDecor() {
+  fillDecor({ items: ['۞','☾','✦','❖','۞','✧','☾','❁'], colors: ['#c8a45c','#d9b86c','#b98f3e'], op: [.14, .32], size: [18, 46] }, 22);
+}
+function applyTheme() {
+  const g = setup.gender;
+  document.body.dataset.theme = g || 'default';
+  const d = $('decor'); d.innerHTML = '';
+  $('nameHint').textContent = G('✍️ اختياري — لو كتبت اسمك هنناديك بيه في رسايل الترحيب والفيدباك بعد كل سؤال وفي النتيجة النهائية.', '✍️ اختياري — لو كتبتي اسمك هنناديكي بيه في رسايل الترحيب والفيدباك بعد كل سؤال وفي النتيجة النهائية.');
+  $('selfPrompt').textContent = G('قارن إجابتك بالإجابة النموذجية… الجواب صح؟', 'قارني إجابتك بالإجابة النموذجية… الجواب صح؟');
+  const cfg = DECOR[g]; if (!cfg) return;
+  fillDecor({ ...cfg, size: [16, 46] }, 18);
+}
+document.addEventListener('click', (e) => {
+  const gb = e.target.closest('[data-gender]');
+  if (gb) { setup.gender = gb.dataset.gender; try { localStorage.setItem('bios_gender', setup.gender); } catch {} applyTheme(); renderSetup(); return; }
+  const md = e.target.closest('[data-mode]');
+  if (md) { setup.mode = md.dataset.mode; try { localStorage.setItem('bios_mode', setup.mode); } catch {}
+    if (!poolFor(setup.scope).length) setup.scope = 'ALL';
+    const mx = poolFor(setup.scope).length; setup.count = Math.min(setup.mode === 'essay' ? mx : 10, mx);
+    $('customCount').value = ''; $('countErr').classList.add('hidden'); renderSetup(); return; }
+  const src = e.target.closest('[data-source]');
+  if (src) { setup.source = src.dataset.source; try { localStorage.setItem('bios_source', setup.source); } catch {}
+    if (!poolFor(setup.scope).length) { setup.scope = 'ALL'; setup.count = 10; }
+    const mx = poolFor(setup.scope).length; if (setup.count > mx) setup.count = Math.min(10, mx);
+    $('customCount').value = ''; renderSetup(); return; }
+  const s0 = e.target.closest('[data-scope]'); if (s0 && s0.disabled) return;
+  const s = s0, c = e.target.closest('[data-count]'), d = e.target.closest('[data-diff]');
+  if (s) { setup.scope = s.dataset.scope; const max = poolFor(setup.scope).length; if (setup.count > max) setup.count = Math.min(10, max); $('customCount').value = ''; renderSetup(); }
+  if (c && !c.disabled) { setup.count = +c.dataset.count; $('customCount').value = ''; $('countErr').classList.add('hidden'); renderSetup(); }
+  if (d) { setup.diff = d.dataset.diff; renderSetup(); }
+});
+$('customCount').addEventListener('input', () => {
+  const v = parseInt($('customCount').value, 10), max = poolFor(setup.scope).length;
+  if (Number.isInteger(v) && v >= 1 && v <= max) { setup.count = v; $('countErr').classList.add('hidden'); renderSetup(); }
+});
+$('startBtn').onclick = () => {
+  const max = poolFor(setup.scope).length;
+  if ($('customCount').value !== '') {
+    const v = Number($('customCount').value);
+    if (!Number.isInteger(v) || v < 1 || v > max) { $('countErr').textContent = `Please enter a whole number between 1 and ${max}.`; $('countErr').classList.remove('hidden'); return; }
+    setup.count = v;
+  }
+  showView('dua');      // du'a & verses first, then "بسم الله نبدأ؟" starts the exam
+};
+$('bismillahBtn').onclick = () => startExam();
+
+/* =================== QUESTION SELECTION =================== */
+function prepareQs(list) {
+  return shuffle(list).map(q => {
+    if (q.type !== 'mcq') return { ...q };
+    const fixed = q.o.some(t => /all (of )?(the|these)|none of|above|^[A-D](\s*,\s*[A-D])+$/i.test(t.trim()));
+    const idx = fixed ? q.o.map((_, i) => i) : shuffle(q.o.map((_, i) => i));
+    return { ...q, opts: idx.map(i => q.o[i]), ans: idx.indexOf(q.a) };
+  });
+}
+function buildSimulation() {
+  // 32 random bank MCQs (no near-duplicates) + 2 random bank short-answer questions at the end, like the real exam
+  const seen = new Set(), mcq = [];
+  for (const q of shuffle(QUESTIONS.filter(q => q.src === 'bank' && q.type === 'mcq'))) {
+    if (mcq.length >= SIM_MCQ) break; if (q.g && seen.has(q.g)) continue; if (q.g) seen.add(q.g); mcq.push(q);
+  }
+  const essays = shuffle(QUESTIONS.filter(q => q.src === 'bank' && q.type === 'essay')).slice(0, SIM_ESSAY);
+  return [...prepareQs(mcq), ...prepareQs(essays)];
+}
+function buildExam(scope, count, diff) {
+  if (setup.mode === 'sim') return buildSimulation();
+  const pool = poolFor(scope);
+  if (count >= pool.length) return prepareQs(pool);           // whole bank / whole lecture
+  const order = { easy: ['easy','medium','hard'], medium: ['medium','easy','hard'], hard: ['hard','medium','easy'] }[diff];
+  const rank = (q) => order.indexOf(q.diff);
+  const pick = (list, n) => { const seen = new Set(), out = [];
+    for (const q of shuffle(list).sort((a, b) => rank(a) - rank(b))) { if (out.length >= n) break; if (q.g && seen.has(q.g)) continue; if (q.g) seen.add(q.g); out.push(q); }
+    return out; };
+  const bank = pool.filter(q => q.src === 'bank'), lec = pool.filter(q => q.src === 'lecture');
+  let nLec = Math.min(lec.length, Math.max(count >= 7 ? 1 : 0, Math.round(count * LECTURE_SHARE)));
+  let nBank = Math.min(bank.length, count - nLec);
+  nLec = Math.min(lec.length, count - nBank);
+  return prepareQs([...pick(bank, nBank), ...pick(lec, nLec)]);
+}
+
+/* =================== EXAM =================== */
+let exam = null, timerInt = null;
+function startExam(retryQs) {
+  const isRetry = Array.isArray(retryQs);
+  exam = { qs: isRetry ? prepareQs(retryQs) : buildExam(setup.scope, setup.count, setup.diff), isRetry,
+           i: 0, score: 0, answers: [], start: Date.now(), selected: null, done: false, streak: 0, best: 0, saved: false };
+  $('qTotal').textContent = exam.qs.length; $('liveScore').textContent = '0'; $('streak').textContent = '0';
+  clearInterval(timerInt);
+  timerInt = setInterval(() => { $('timer').textContent = fmtTime(Math.floor((Date.now() - exam.start) / 1000)); }, 1000);
+  $('timer').textContent = '00:00';
+  showView('exam'); renderQuestion();
+  const n = setup.name;
+  toast(isRetry ? `يلا نصلّح اللي فات${YA(n)} ${G('💪', '🌸')}` : `بسم الله، بالتوفيق${YA(n)} ${G('🤍', '💖')}`);
+}
+
+function renderQuestion() {
+  const q = exam.qs[exam.i];
+  exam.selected = null; exam.done = false;
+  $('qNum').textContent = exam.i + 1;
+  $('progressBar').style.width = `${(exam.i / exam.qs.length) * 100}%`;
+  // reminder after every 5 questions
+  if (exam.i > 0 && exam.i % 5 === 0) { $('reminderText').textContent = pickOne(ADHKAR); $('reminder').classList.remove('hidden'); }
+  else $('reminder').classList.add('hidden');
+  const s = scopeOf(q.scope);
+  $('qTags').innerHTML = `
+    <span class="tag" style="color:${q.src === 'bank' ? 'var(--bankTag)' : 'var(--lecTag)'};border-color:${q.src === 'bank' ? 'var(--bankTag)' : 'var(--lecTag)'}">${q.src === 'bank' ? '📘' : '🧪'} ${esc(q.tag)}</span>
+    <span class="tag" style="color:${s.c}">${esc(s.label)}</span>
+    <span class="tag">${diffLabel(q.diff)}</span>
+    ${q.type === 'essay' ? '<span class="tag" style="color:var(--amber);border-color:var(--amber)">✍️ Short answer</span>' : ''}`;
+  $('qText').textContent = q.q;
+  $('feedback').className = 'hidden mt-5 rounded-xl p-4 text-sm leading-relaxed';
+  $('nextBtn').classList.add('hidden');
+  if (q.type === 'essay') {
+    $('qOptions').innerHTML = ''; $('qOptions').classList.add('hidden');
+    $('essayBox').classList.remove('hidden'); $('essayInput').value = ''; $('essayInput').disabled = false;
+    $('modelBox').classList.add('hidden'); $('selfMark').classList.add('hidden');
+    $('modelList').innerHTML = q.ans.map(l => `<li>• ${esc(l)}</li>`).join('');
+    $('submitBtn').classList.add('hidden'); $('revealBtn').classList.remove('hidden');
+  } else {
+    $('essayBox').classList.add('hidden'); $('revealBtn').classList.add('hidden'); $('qOptions').classList.remove('hidden');
+    $('qOptions').innerHTML = q.opts.map((o, i) => `<button type="button" class="opt" data-opt="${i}"><span class="k">${String.fromCharCode(65 + i)}</span><span class="pt-0.5">${esc(o)}</span></button>`).join('');
+    $('submitBtn').classList.remove('hidden'); $('submitBtn').disabled = true;
+  }
+  const card = $('qCard'); card.classList.remove('fade'); void card.offsetWidth; card.classList.add('fade');
+}
+$('reminderX').onclick = () => $('reminder').classList.add('hidden');
+
+$('qOptions').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-opt]'); if (!b || exam.done) return;
+  exam.selected = +b.dataset.opt;
+  document.querySelectorAll('#qOptions .opt').forEach(el => el.classList.toggle('sel', el === b));
+  $('submitBtn').disabled = false;
+});
+
+function record(ok, extra) {
+  const q = exam.qs[exam.i];
+  exam.done = true;
+  const prev = exam.streak;
+  if (ok) { exam.score++; exam.streak++; exam.best = Math.max(exam.best, exam.streak); }
+  else exam.streak = 0;
+  exam.answers.push({ q, ok, ...extra });
+  $('liveScore').textContent = exam.score; $('streak').textContent = exam.streak;
+  const n = setup.name;
+  if (ok && STREAKS[exam.streak]) toast(STREAKS[exam.streak](n), 3200);
+  else if (ok && exam.streak > 100 && exam.streak % 25 === 0) toast(`${exam.streak} ورا بعض… تبارك الله 😳`, 3200);
+  else if (!ok && prev >= 5) toast(G(`الحصان بيكبو${YA(n)} 😅 يلا عدّاد جديد`, `الفرس بتكبو${YA(n)} 😅 يلا عدّاد جديد 🌸`), 3000);
+  $('progressBar').style.width = `${((exam.i + 1) / exam.qs.length) * 100}%`;
+  $('nextBtn').textContent = exam.i === exam.qs.length - 1 ? 'Finish & see results →' : 'Next →';
+  $('nextBtn').classList.remove('hidden'); $('nextBtn').focus();
+}
+function feedbackBox(ok, bodyHtml) {
+  const n = setup.name, fb = $('feedback');
+  fb.className = 'mt-5 rounded-xl p-4 text-sm leading-relaxed fade';
+  fb.style.background = ok ? 'var(--okBg)' : 'var(--badBg)';
+  fb.style.border = `1px solid ${ok ? 'var(--okLine)' : 'var(--badLine)'}`;
+  fb.innerHTML = `<div class="ar text-lg font-bold mb-2" style="color:${ok ? 'var(--okText)' : 'var(--badText)'}">${esc(pickOne(ok ? PRAISE : NUDGE)(n))}</div>${bodyHtml}`;
+}
+$('submitBtn').onclick = () => {
+  if (exam.selected === null || exam.done) return;
+  const q = exam.qs[exam.i], ok = exam.selected === q.ans;
+  document.querySelectorAll('#qOptions .opt').forEach((el, i) => {
+    el.disabled = true; el.classList.remove('sel');
+    if (i === q.ans) el.classList.add('ok'); else if (i === exam.selected) el.classList.add('bad');
+  });
+  feedbackBox(ok, `${ok ? '' : `<div class="font-semibold mb-1">Correct answer: (${String.fromCharCode(65 + q.ans)}) ${esc(q.opts[q.ans])}</div>`}<div style="color:var(--soft)">${esc(q.e)}</div>`);
+  $('submitBtn').classList.add('hidden');
+  record(ok, { chosen: exam.selected });
+};
+$('revealBtn').onclick = () => {
+  $('modelBox').classList.remove('hidden'); $('selfMark').classList.remove('hidden');
+  $('revealBtn').classList.add('hidden'); $('essayInput').disabled = true;
+};
+function selfMark(ok) {
+  if (exam.done) return;
+  $('selfMark').classList.add('hidden');
+  feedbackBox(ok, ok ? '<div style="color:var(--soft)">Counted as correct. Keep the model answer in mind for the exam.</div>'
+                     : '<div style="color:var(--soft)">No problem — read the model answer above once more; it will come back in the retry round.</div>');
+  record(ok, { written: $('essayInput').value.trim() });
+}
+$('markRight').onclick = () => selfMark(true);
+$('markWrong').onclick = () => selfMark(false);
+$('nextBtn').onclick = () => { if (exam.i < exam.qs.length - 1) { exam.i++; renderQuestion(); } else finishExam(); };
+
+/* =================== RESULT =================== */
+function finishExam() {
+  clearInterval(timerInt);
+  const total = exam.qs.length, pct = Math.round((exam.score / total) * 1000) / 10;
+  const dur = Math.floor((Date.now() - exam.start) / 1000), n = setup.name, s = scopeOf(setup.scope);
+  const fullBank = !exam.isRetry && setup.mode === 'custom' && setup.scope === 'ALL' && total === poolFor('ALL').length && exam.score === total;
+  let msg;
+  if (fullBank) msg = `ما شاء الله، تبارك الرحمن ${G('عليك', 'عليكي')} ${G('جبت', 'جبتي')} البنك في شوال 👏`;
+  else if (pct === 100) msg = `فُل مارك${YA(n)}! ما شاء الله تبارك الله ${G('🎉', '💖')}`;
+  else if (pct >= 85) msg = `ما شاء الله ${G('عليك', 'عليكي')}${YA(n)}، مستوى عالي ${G('🌟', '🌸')}`;
+  else if (pct >= 70) msg = `حلو أوي${YA(n)}، شوية مراجعة ${G('وتبقى', 'وتبقي')} فُل ${G('💪', '✨')}`;
+  else if (pct >= 50) msg = `${G('عدّيت', 'عدّيتي')}${YA(n)}، بس لسه محتاجين نراجع شوية 📖`;
+  else msg = `ولا يهمك${YA(n)}، ${G('ارجع', 'ارجعي')} للمحاضرات ${G('وحِل', 'وحِلّي')} الغلط تاني وإن شاء الله ${G('تكسّرها', 'تكسّريها')} 🤍`;
+  if (exam.isRetry) msg = (exam.score === total ? `${G('صلّحت', 'صلّحتي')} كل الغلط، تبارك الله ✅` : `فاضل ${total - exam.score} — ${G('حاول', 'حاولي')} تاني ${G('💪', '🌸')}`);
+  $('resLabel').textContent = exam.isRetry ? 'Retry round — your score' : (n ? `${n}'s score` : 'Your score');
+  $('resPct').textContent = pct + '%';
+  $('resPct').style.color = pct >= 75 ? 'var(--acc)' : pct >= 50 ? 'var(--amber)' : 'var(--rose)';
+  $('resScore').textContent = `${exam.score} / ${total} correct`;
+  $('resMsg').textContent = msg;
+  const modeLabel = setup.mode === 'sim' ? `Exam simulation (${SIM_MCQ} MCQ)` : setup.mode === 'essay' ? s.label + ' (short-answer only)' : s.label + (setup.source === 'bank' ? ' (bank only)' : '');
+  $('resScope').textContent = setup.mode === 'sim' ? 'Exam simulation' : setup.mode === 'essay' ? s.label + ' · short-answer only' : s.label + (s.key !== 'ALL' ? ' · ' + s.sub : '');
+  $('resDiff').textContent = setup.mode !== 'custom' ? 'Mixed' : (total >= poolFor(setup.scope).length && !exam.isRetry ? 'All levels' : diffLabel(setup.diff));
+  $('resTime').textContent = fmtTime(dur);
+  $('resStreak').textContent = exam.best + ' 🔥';
+  $('reviewList').classList.add('hidden'); $('reviewToggle').textContent = 'Review answers';
+  $('reviewList').innerHTML = exam.answers.map((a, i) => `
+    <div class="panel p-5" style="border-left:4px solid ${a.ok ? 'var(--okLine)' : 'var(--badLine)'}">
+      <div class="flex flex-wrap gap-2 mb-2"><span class="tag">Q${i + 1}</span><span class="tag">${esc(a.q.tag)}</span></div>
+      <div class="font-semibold mb-2">${esc(a.q.q)}</div>
+      ${a.q.type === 'essay'
+        ? `${a.written ? `<div class="text-sm muted mb-1">Your answer: ${esc(a.written)}</div>` : ''}<div class="text-sm" style="color:var(--okText)">Model answer: ${a.q.ans.map(esc).join(' · ')}</div>`
+        : `<div class="text-sm">${a.ok ? '' : `<div style="color:var(--badText)">Your answer: ${esc(a.q.opts[a.chosen])}</div>`}<div style="color:var(--okText)">Correct: ${esc(a.q.opts[a.q.ans])}</div></div><div class="text-sm muted mt-2">${esc(a.q.e)}</div>`}
+    </div>`).join('');
+  const wrong = exam.answers.filter(a => !a.ok).map(a => QUESTIONS.find(x => x.id === a.q.id));
+  exam.wrong = wrong;
+  $('retryWrongBtn').classList.toggle('hidden', wrong.length === 0);
+  $('retryWrongBtn').textContent = `↻ Retry the ${wrong.length} I got wrong`;
+  showView('result');
+  if (pct === 100) confetti(fullBank ? 90 : 45);
+  if (!exam.isRetry) saveResult({ studentName: SID, gender: setup.gender || 'none', scope: setup.mode === 'sim' ? 'SIM' : setup.scope, scopeLabel: modeLabel,
+    difficulty: setup.mode === 'custom' ? setup.diff : 'mixed', score: exam.score, total, percentage: pct, durationSec: dur });
+}
+$('retryWrongBtn').onclick = () => { if (exam && exam.wrong && exam.wrong.length) startExam(exam.wrong); };
+$('reviewToggle').onclick = () => { const h = $('reviewList').classList.toggle('hidden'); $('reviewToggle').textContent = h ? 'Review answers' : 'Hide review'; };
+$('restartBtn').onclick = () => { showView('setup'); renderSetup(); };
+
+/* --- silent save with retries + offline queue --- */
+async function sendOne(rec) {
+  if (FB_ENABLED && db) await db.collection(COLLECTION).add({ ...rec, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
+  else { const arr = lsGet(LOCAL_KEY); arr.push({ ...rec, id: 'local-' + Date.now(), timestamp: rec.clientTime }); lsSet(LOCAL_KEY, arr); }
+}
+async function saveResult(r) {
+  const rec = { ...r, clientTime: new Date().toISOString() };
+  for (let t = 0; t < 4; t++) {
+    try { await sendOne(rec); exam.saved = true; return; }
+    catch (err) { console.warn('save attempt failed', err); await new Promise(res => setTimeout(res, 1500 * (t + 1))); }
+  }
+  const p = lsGet(PENDING_KEY); p.push(rec); lsSet(PENDING_KEY, p);
+}
+async function flushPending() {
+  const p = lsGet(PENDING_KEY); if (!p.length) return;
+  const left = []; for (const rec of p) { try { await sendOne(rec); } catch { left.push(rec); } } lsSet(PENDING_KEY, left);
+}
+
+/* =================== ADMIN =================== */
+let adminUnsub = null, adminRows = [], adminUnlocked = false;
+async function sha256(t) { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join(''); }
+let logoTaps = [];
+$('logo').addEventListener('click', () => {
+  const now = Date.now(); logoTaps = logoTaps.filter(t => now - t < 3000); logoTaps.push(now);
+  if (logoTaps.length >= 5) { logoTaps = []; openCodeBox(); }
+});
+function openCodeBox() { if (adminUnlocked) { openAdmin(); return; } $('codeInput').value = ''; $('codeErr').classList.add('hidden'); $('codeBox').classList.remove('hidden'); setTimeout(() => $('codeInput').focus(), 50); }
+const closeCodeBox = () => $('codeBox').classList.add('hidden');
+$('codeBox').addEventListener('click', e => { if (e.target === $('codeBox')) closeCodeBox(); });
+$('codeInput').addEventListener('keydown', e => { if (e.key === 'Enter') $('codeGo').click(); if (e.key === 'Escape') closeCodeBox(); });
+$('codeGo').onclick = async () => {
+  const pass = $('codeInput').value.trim(); $('codeGo').disabled = true;
+  try {
+    if (!pass || (await sha256(pass)) !== PASS_HASH) throw new Error('bad');
+    if (FB_ENABLED && auth) await auth.signInWithEmailAndPassword(ADMIN_EMAIL, pass);
+    adminUnlocked = true; closeCodeBox(); clearInterval(timerInt); openAdmin();
+  } catch (e) { if (e.message !== 'bad') console.error(e); $('codeErr').classList.remove('hidden'); }
+  finally { $('codeGo').disabled = false; }
+};
+if (location.hash === '#admin') { history.replaceState(null, '', location.pathname + location.search); setTimeout(openCodeBox, 300); }
+
+function openAdmin() {
+  showView('admin');
+  $('adminMode').textContent = FB_ENABLED && db ? 'Connected to Firebase — results appear in real time.' : 'Demo mode — showing results stored in this browser only.';
+  if (adminUnsub) return;
+  if (FB_ENABLED && db) {
+    adminUnsub = db.collection(COLLECTION).orderBy('timestamp', 'desc').onSnapshot(snap => {
+      adminRows = snap.docs.map(d => { const x = d.data(); return { ...x, ts: x.timestamp?.toDate ? x.timestamp.toDate() : new Date(x.clientTime || Date.now()) }; });
+      renderAdmin();
+    }, err => { $('adminMode').textContent = 'Permission denied or connection error: ' + (err.code || err.message); });
+  } else {
+    const load = () => { adminRows = lsGet(LOCAL_KEY).map(x => ({ ...x, ts: new Date(x.timestamp) })).sort((a, b) => b.ts - a.ts); renderAdmin(); };
+    load(); const on = e => { if (e.key === LOCAL_KEY) load(); }; window.addEventListener('storage', on); adminUnsub = () => window.removeEventListener('storage', on);
+  }
+}
+// names are never shown: older records that stored "Name · Student-XXXX" are reduced to the ID
+const idOf = (r) => { const s = String(r.studentName || ''); const m = s.match(/Student-[A-Z0-9]{4}/); return m ? m[0] : 'Unknown'; };
+const genOf = (r) => r.gender === 'boy' || r.gender === 'girl' ? r.gender : 'none';
+const GEN_LABEL = { boy: '👦 Boy', girl: '👧 Girl', none: '<span class="muted">—</span>' };
+function renderAdmin() {
+  const term = $('adminSearch').value.trim().toLowerCase();
+  const rows = adminRows.filter(r => !term || idOf(r).toLowerCase().includes(term));
+  // unique students by ID; a student's gender = the one on their latest attempt (rows are newest first)
+  const latest = new Map(); adminRows.forEach(r => { if (!latest.has(idOf(r))) latest.set(idOf(r), genOf(r)); });
+  const cnt = { boy: 0, girl: 0, none: 0 }, att = { boy: 0, girl: 0, none: 0 };
+  latest.forEach(g => cnt[g]++); adminRows.forEach(r => att[genOf(r)]++);
+  $('stBoys').textContent = cnt.boy; $('stGirls').textContent = cnt.girl; $('stNone').textContent = cnt.none;
+  $('stBoysA').textContent = att.boy + ' attempts'; $('stGirlsA').textContent = att.girl + ' attempts'; $('stNoneA').textContent = att.none + ' attempts';
+  $('stTakers').textContent = latest.size; $('stAttempts').textContent = adminRows.length;
+  $('stAvg').textContent = adminRows.length ? (adminRows.reduce((a, r) => a + (+r.percentage || 0), 0) / adminRows.length).toFixed(1) + '%' : '–';
+  $('stPass').textContent = adminRows.length ? Math.round(adminRows.filter(r => r.percentage >= 50).length / adminRows.length * 100) + '%' : '–';
+  $('adminEmpty').classList.toggle('hidden', rows.length > 0);
+  $('adminRows').innerHTML = rows.map((r, i) => { const p = +r.percentage || 0;
+    return `<tr class="border-t">
+      <td class="px-4 py-3 muted font-mono">${i + 1}</td><td class="px-4 py-3 font-semibold font-mono">${esc(idOf(r))}</td><td class="px-4 py-3">${GEN_LABEL[genOf(r)]}</td>
+      <td class="px-4 py-3 muted whitespace-nowrap">${esc(r.ts.toLocaleString())}</td><td class="px-4 py-3">${esc(r.scopeLabel || r.scope)}</td>
+      <td class="px-4 py-3">${esc(diffLabel(r.difficulty))}</td><td class="px-4 py-3 text-right font-mono">${esc(r.score)}/${esc(r.total)}</td>
+      <td class="px-4 py-3 text-right font-mono" style="color:${p >= 75 ? 'var(--acc)' : p >= 50 ? 'var(--amber)' : 'var(--rose)'}">${p}%</td></tr>`; }).join('');
+}
+$('adminSearch').addEventListener('input', renderAdmin);
+$('exportCsv').onclick = () => {
+  const cell = (v) => { let s = String(v ?? ''); if (/^[=+\-@]/.test(s)) s = "'" + s; return `"${s.replace(/"/g, '""')}"`; };
+  const lines = [['Student ID','Gender','Date','Lecture','Difficulty','Score','Total','Percentage','Duration (s)'].map(cell).join(',')]
+    .concat(adminRows.map(r => [idOf(r), genOf(r), r.ts.toISOString(), r.scopeLabel || r.scope, diffLabel(r.difficulty), r.score, r.total, r.percentage, r.durationSec].map(cell).join(',')));
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['﻿' + lines.join('\n')], { type: 'text/csv;charset=utf-8' }));
+  a.download = `biostat_results_${new Date().toISOString().slice(0, 10)}.csv`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+};
+$('adminLogout').onclick = async () => {
+  if (typeof adminUnsub === 'function') adminUnsub(); adminUnsub = null; adminRows = []; adminUnlocked = false; $('adminRows').innerHTML = '';
+  if (FB_ENABLED && auth) { try { await auth.signOut(); } catch {} }
+  showView('setup'); renderSetup();
+};
+
+/* boot */
+applyTheme();
+renderSetup();
+flushPending();
+</script>
+</body>
+</html>
